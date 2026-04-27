@@ -6,6 +6,9 @@
 <title>Betjeeric Operations Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Firebase SDK (compat version - easy to use) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 :root{--bg:#080c12;--sur:#0f1520;--sur2:#162030;--brd:#1e2d42;--acc:#1d6fea;--acc2:#16a34a;--gold:#e3b341;--red:#f04040;--amb:#d29922;--pur:#8b5cf6;--cyn:#22d3ee;--txt:#dde4f0;--mut:#5a7090;--wht:#fff;}
 *{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
@@ -576,29 +579,47 @@ const WDP=['Simpaisa','ClickPay','PayVIP','Jeepay','Bank'];
 const WPC={Simpaisa:'#f97316',ClickPay:'#34d399',PayVIP:'#a78bfa',Jeepay:'#fbbf24',Bank:'#22d3ee'};
 const SUPP_PGS=['PayVIP','ClickPay','Jeepay','Simpaisa'];
 const SUPP_C={PayVIP:'#a78bfa',ClickPay:'#34d399',Jeepay:'#fbbf24',Simpaisa:'#f97316'};
-const SK_DP='betjeeric_dp_v4',SK_WD='betjeeric_wd_v4',SK_MT='betjeeric_mt_v4';
 let DP=null,WD=null,dpF=null,wdF=null,CI={};
 
-// ── STORAGE ──
+// ── FIREBASE CONFIG ────────────────────────────────────────────
+// STEP 1: Replace ALL values below with YOUR Firebase project config.
+// Get them from: Firebase Console → Project Settings → Your Apps → Web App
+const FB_CONFIG={
+  apiKey:            "AIzaSyCdbD8QKBMnz1zNRMdYlUFPzP0CDpPw_2w",
+  authDomain:        "bj-data-fc9e7.firebaseapp.com",
+  projectId:         "bj-data-fc9e7",
+  storageBucket:     "bj-data-fc9e7.firebasestorage.app",
+  messagingSenderId: "54749965634",
+  appId:             "1:54749965634:web:9162dfa555d6f2f5642cdb"
+};
+// ──────────────────────────────────────────────────────────────
+
+firebase.initializeApp(FB_CONFIG);
+const db=firebase.firestore();
+
+// ── STORAGE (Firebase Firestore) ──
+// Saves the raw CSV text. On re-upload it fully replaces only the file(s) uploaded.
+// All viewers always load the latest data from Firebase automatically.
 async function loadStore(){
   try{
-    const[a,b,c]=await Promise.all([
-      window.storage.get(SK_DP,true).catch(()=>null),
-      window.storage.get(SK_WD,true).catch(()=>null),
-      window.storage.get(SK_MT,true).catch(()=>null)
-    ]);
-    if(a?.value) DP=JSON.parse(a.value);
-    if(b?.value) WD=JSON.parse(b.value);
-    if(c?.value){const m=JSON.parse(c.value);el('lui').textContent='Last upload: '+m.t;sh('lui');}
-  }catch(e){console.warn(e);}
+    const snap=await db.collection('betjeeric').doc('latest').get();
+    if(!snap.exists)return;
+    const d=snap.data();
+    // Re-parse raw CSV text so all features (agent daily, scorecard) work correctly
+    if(d.dpCsv)DP=parseDP(d.dpCsv);
+    if(d.wdCsv)WD=parseWD(d.wdCsv);
+    if(d.t){el('lui').textContent='Last upload: '+d.t;sh('lui');}
+  }catch(e){console.warn('Firebase load error:',e);}
 }
-async function saveStore(nd,nw){
+async function saveStore(dpText,wdText){
+  // merge:true means: only update the keys you provide.
+  // So uploading only DP keeps the old WD data, and vice versa.
+  // Uploading both replaces both — old data is gone.
   const now=new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'});
-  try{
-    if(nd) await window.storage.set(SK_DP,JSON.stringify(nd),true);
-    if(nw) await window.storage.set(SK_WD,JSON.stringify(nw),true);
-    await window.storage.set(SK_MT,JSON.stringify({t:now}),true);
-  }catch(e){console.warn(e);}
+  const data={t:now};
+  if(dpText!==null)data.dpCsv=dpText;
+  if(wdText!==null)data.wdCsv=wdText;
+  await db.collection('betjeeric').doc('latest').set(data,{merge:true});
 }
 
 // ── UPLOAD ──
@@ -619,11 +640,11 @@ async function proc(){
   const btn=el('pb'); btn.textContent='⏳ Processing…'; btn.classList.remove('ready');
   sp2(5);
   try{
-    let nd=null,nw=null;
-    if(dpF){const t=await rf(dpF);sp2(25);nd=parseDP(t);sp2(55);}
-    if(wdF){const t=await rf(wdF);sp2(65);nw=parseWD(t);sp2(78);}
+    let nd=null,nw=null,dpText=null,wdText=null;
+    if(dpF){dpText=await rf(dpF);sp2(25);nd=parseDP(dpText);sp2(55);}
+    if(wdF){wdText=await rf(wdF);sp2(65);nw=parseWD(wdText);sp2(78);}
     btn.textContent='💾 Saving for all viewers…';btn.classList.add('saving');sp2(88);
-    await saveStore(nd,nw);
+    await saveStore(dpText,wdText);
     if(nd)DP=nd; if(nw)WD=nw;
     sp2(100);
     const now=new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'});
