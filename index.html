@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Betjeeric Operations Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c12;--sur:#0f1520;--sur2:#162030;--brd:#1e2d42;--acc:#1d6fea;--acc2:#16a34a;--gold:#e3b341;--red:#f04040;--amb:#d29922;--pur:#8b5cf6;--cyn:#22d3ee;--txt:#dde4f0;--mut:#5a7090;--wht:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);font-size:13px;min-height:100vh;}
+#ls{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.ll{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--wht);}
+.ls2{font-size:10px;color:var(--mut);letter-spacing:2px;text-transform:uppercase;}
+.lb{width:180px;height:3px;background:var(--brd);border-radius:99px;overflow:hidden;}
+.lf{height:100%;background:var(--acc);border-radius:99px;animation:lp 1.2s ease-in-out infinite;}
+@keyframes lp{0%{width:0%}50%{width:80%}100%{width:100%}}
+.sidebar{position:fixed;top:0;left:0;width:212px;height:100vh;background:var(--sur);border-right:1px solid var(--brd);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.logo{padding:16px 14px 11px;border-bottom:1px solid var(--brd);}
+.lm{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--wht);}
+.ls3{font-size:9px;color:var(--mut);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.ubtn{margin:9px 9px 3px;background:var(--acc);color:#fff;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:9px 10px;border-radius:6px;border:none;cursor:pointer;width:calc(100% - 18px);transition:.15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.ubtn:hover{background:#1a5dd0;}
+.ds{margin:5px 9px 3px;padding:6px 10px;border-radius:6px;font-size:10px;border:1px solid;font-family:'DM Mono',monospace;}
+.ds.nd{background:#160808;border-color:#3d1515;color:#f87171;}
+.ds.hd{background:#081408;border-color:#1a4020;color:#4ade80;}
+.ds.ld{background:#080f20;border-color:#1a3060;color:#60a5fa;}
+.sd{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+.sr{background:var(--red);}.sg{background:var(--acc2);}.sb{background:var(--acc);animation:bk 1s infinite;}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.lu{margin:0 9px 5px;padding:5px 10px;background:var(--sur2);border-radius:5px;font-size:9px;color:var(--mut);font-family:'DM Mono',monospace;border:1px solid var(--brd);}
+.ns{padding:9px 11px 2px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mut);font-weight:600;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:5px;margin:1px 5px;cursor:pointer;color:var(--mut);font-size:12px;font-weight:500;transition:.15s;background:none;border:none;width:calc(100% - 10px);text-align:left;}
+.ni:hover{background:var(--sur2);color:var(--txt);}
+.ni.active{background:var(--acc);color:#fff;}
+.nb{margin-left:auto;font-size:9px;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:99px;}
+.ni.active .nb{background:rgba(255,255,255,.2);}
+.uo{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.uo.hidden{display:none;}
+.um{background:var(--sur);border:1px solid var(--brd);border-radius:14px;padding:28px 32px;width:550px;max-width:95vw;position:relative;}
+.mc{position:absolute;top:13px;right:15px;background:none;border:none;color:var(--mut);font-size:20px;cursor:pointer;}
+.mc:hover{color:var(--txt);}
+.mt{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--wht);margin-bottom:3px;}
+.ms{font-size:12px;color:var(--mut);margin-bottom:5px;}
+.mn{font-size:11px;color:var(--acc);background:rgba(29,111,234,.1);border:1px solid rgba(29,111,234,.3);border-radius:6px;padding:7px 11px;margin-bottom:18px;display:flex;align-items:flex-start;gap:7px;}
+.uzs{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px;}
+.uz{border:2px dashed var(--brd);border-radius:10px;padding:18px 13px;text-align:center;cursor:pointer;transition:.2s;position:relative;}
+.uz:hover,.uz.dv{border-color:var(--acc);background:rgba(29,111,234,.06);}
+.uz.ld2{border-color:var(--acc2);background:rgba(22,163,74,.07);}
+.uz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.zi{font-size:24px;margin-bottom:5px;}
+.zt{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--wht);margin-bottom:2px;}
+.zs{font-size:10px;color:var(--mut);}
+.zn{font-size:10px;color:var(--acc2);margin-top:4px;font-family:'DM Mono',monospace;}
+.pb2{width:100%;background:var(--acc);color:#fff;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px;border-radius:8px;border:none;cursor:pointer;transition:.2s;opacity:.45;pointer-events:none;}
+.pb2.ready{opacity:1;pointer-events:all;}
+.pb2.ready:hover{background:#1a5dd0;}
+.pb2.saving{background:#0a4d10;color:#4ade80;pointer-events:none;}
+.prb{height:3px;background:var(--brd);border-radius:99px;margin-top:11px;overflow:hidden;display:none;}
+.prf{height:100%;background:var(--acc);border-radius:99px;transition:width .3s;}
+.sm2{text-align:center;font-size:11px;color:var(--acc2);margin-top:9px;display:none;font-family:'DM Mono',monospace;}
+.main{margin-left:212px;min-height:100vh;}
+.page{display:none;padding:22px 26px;animation:fi .2s ease;}
+.page.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.ph{margin-bottom:18px;}.ph-l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:5px;}
+.ph h1{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;color:var(--wht);margin-bottom:2px;}
+.ph p{font-size:12px;color:var(--mut);}
+.ph-m{display:flex;gap:9px;margin-top:9px;flex-wrap:wrap;}
+.ph-t{font-size:10px;font-family:'DM Mono',monospace;background:var(--sur2);border:1px solid var(--brd);padding:2px 9px;border-radius:99px;color:var(--mut);}
+.ph-t span{color:var(--cyn);}
+.kg{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:16px;}
+.kc{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:13px 15px;position:relative;overflow:hidden;}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kc.blue::before{background:var(--acc);}.kc.gold::before{background:var(--gold);}
+.kc.green::before{background:var(--acc2);}.kc.red::before{background:var(--red);}
+.kc.purple::before{background:var(--pur);}.kc.cyan::before{background:var(--cyn);}
+.kl{font-size:9px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.kv{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--wht);line-height:1;}
+.ks{font-size:10px;color:var(--mut);margin-top:3px;}
+.sec{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin:16px 0 11px;display:flex;align-items:center;gap:8px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.cc{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.cc.full{grid-column:1/-1;}
+.ct{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);margin-bottom:10px;}
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--brd);margin-bottom:13px;}
+.dt{border-collapse:collapse;width:100%;min-width:700px;}
+.dt thead th{background:#0a1830;color:#6da0c8;font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:7px 9px;text-align:center;border:1px solid var(--brd);white-space:nowrap;}
+.dt thead th:first-child{text-align:left;}
+.tp{background:#150a28!important;color:#c4b5fd!important;}
+.tb{background:#0a1525!important;color:#7dd3fc!important;}
+.to{background:#0a1a10!important;color:#86efac!important;}
+.dt td{padding:5px 9px;text-align:center;border:1px solid var(--brd);white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;color:var(--txt);}
+.dt td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;}
+.dt tbody tr:nth-child(odd) td{background:#0b1220;}
+.dt tbody tr:nth-child(even) td{background:#0f1929;}
+.dt tbody tr:hover td{background:#162035!important;}
+.tr{background:#071510!important;color:var(--gold)!important;font-weight:700;border-top:2px solid var(--acc2)!important;}
+.dt .tr td{background:#071510!important;color:var(--gold)!important;}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+.oa{background:#071510!important;color:#86efac!important;font-weight:700;}
+.oc{background:#0a1525!important;color:#7dd3fc!important;font-weight:700;}
+.nd2 td{color:#2a3a52!important;}
+.pl{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+.pr{background:#200808;color:#f87171;}.pg{background:#082008;color:#4ade80;}.pa{background:#1e1400;color:#fbbf24;}.pb{background:#081828;color:#60a5fa;}
+.fi{display:flex;gap:11px;padding:11px 13px;border-radius:8px;margin-bottom:8px;border-left:3px solid;}
+.fi.cr{background:#180808;border-color:var(--red);}.fi.wn{background:#181000;border-color:var(--amb);}
+.fi.gd{background:#081808;border-color:var(--acc2);}.fi.in{background:#080f20;border-color:var(--acc);}
+.fi-i{font-size:15px;flex-shrink:0;}
+.fb h4{font-size:12px;font-weight:600;margin-bottom:2px;}
+.fi.cr h4{color:#f87171;}.fi.wn h4{color:#fbbf24;}.fi.gd h4{color:#4ade80;}.fi.in h4{color:#60a5fa;}
+.fb p{font-size:11px;color:var(--mut);line-height:1.65;}.fb p strong{color:var(--txt);}
+.rc{border:1px solid var(--brd);border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;gap:11px;background:var(--sur);}
+.rn{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--acc);flex-shrink:0;min-width:22px;line-height:1;}
+.rc h4{font-size:12px;font-weight:600;color:var(--wht);margin-bottom:2px;}
+.rc p{font-size:11px;color:var(--mut);line-height:1.65;}
+.rc.hi{border-left:3px solid var(--red);}.rc.med{border-left:3px solid var(--amb);}.rc.lo{border-left:3px solid var(--acc2);}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bl{width:66px;font-size:11px;font-weight:600;color:var(--txt);flex-shrink:0;}
+.bt{flex:1;height:6px;background:var(--brd);border-radius:99px;overflow:hidden;}
+.bf{height:100%;border-radius:99px;}
+.bv{font-size:10px;color:var(--mut);width:42px;text-align:right;font-family:'DM Mono',monospace;flex-shrink:0;}
+.bb{font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;flex-shrink:0;}
+.db{margin-bottom:13px;}
+.dh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;background:linear-gradient(90deg,#0a1830,#0d2248);border:1px solid var(--acc);border-radius:8px 8px 0 0;padding:9px 13px;border-bottom:none;}
+.dl{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--gold);}
+.dm{font-size:11px;color:var(--mut);}.dm b{color:var(--wht);}
+.fb2{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap;}
+.si{background:var(--sur);border:1px solid var(--brd);color:var(--txt);font-family:'DM Mono',monospace;font-size:11px;padding:6px 11px;border-radius:6px;outline:none;width:170px;}
+.si:focus{border-color:var(--acc);}
+.dn{display:flex;flex-wrap:wrap;gap:4px;}
+.dp2{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border:1px solid var(--brd);border-radius:99px;cursor:pointer;background:var(--sur);color:var(--mut);text-decoration:none;transition:.15s;}
+.dp2:hover{background:var(--acc);color:#fff;border-color:var(--acc);}
+.hidden{display:none!important;}
+.st{width:100%;border-collapse:collapse;font-size:12px;}
+.st th{background:#0a1830;color:#6da0c8;padding:7px 11px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.st td{padding:8px 11px;border-bottom:1px solid var(--brd);font-family:'DM Mono',monospace;font-size:11px;}
+.st tr:last-child td{border-bottom:none;}.st tr:hover td{background:var(--sur2);}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:15px;}
+.cd{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:16px 18px;}
+.ct2{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:11px;padding-bottom:8px;border-bottom:1px solid var(--brd);}
+.es{text-align:center;padding:65px 20px;color:var(--mut);}
+.ei{font-size:40px;margin-bottom:12px;}
+.es h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--txt);margin-bottom:6px;}
+.es p{font-size:12px;max-width:320px;margin:0 auto 16px;line-height:1.7;}
+.eb{background:var(--acc);color:#fff;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:9px 18px;border-radius:7px;border:none;cursor:pointer;}
+.eb:hover{background:#1a5dd0;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="ls"><div class="ll">Betjeeric Ops</div><div class="ls2">Loading shared data…</div><div class="lb"><div class="lf"></div></div></div>
+
+<!-- UPLOAD -->
+<div class="uo hidden" id="uo">
+  <div class="um">
+    <button class="mc" onclick="closeU()">✕</button>
+    <div class="mt">Upload CSV Data</div>
+    <div class="ms">Upload Deposit and/or Withdrawal CSV files.</div>
+    <div class="mn">💾 Data is saved to <strong>shared storage</strong> — once uploaded, all viewers see the updated dashboard automatically.</div>
+    <div class="uzs">
+      <div class="uz" id="zdp" ondragover="dov(event,'zdp')" ondragleave="dlv('zdp')" ondrop="drf(event,'dp')">
+        <input type="file" accept=".csv" onchange="fs(this,'dp')">
+        <div class="zi">📥</div><div class="zt">Deposit CSV</div><div class="zs">DP_BJ_*.csv</div>
+        <div class="zn" id="dpN">No file selected</div>
+      </div>
+      <div class="uz" id="zwd" ondragover="dov(event,'zwd')" ondragleave="dlv('zwd')" ondrop="drf(event,'wd')">
+        <input type="file" accept=".csv" onchange="fs(this,'wd')">
+        <div class="zi">📤</div><div class="zt">Withdrawal CSV</div><div class="zs">WD_BJ_*.csv</div>
+        <div class="zn" id="wdN">No file selected</div>
+      </div>
+    </div>
+    <button class="pb2" id="pb" onclick="proc()">⚡ Process &amp; Save for All Viewers</button>
+    <div class="prb" id="prb"><div class="prf" id="prf"></div></div>
+    <div class="sm2" id="sm">✅ Saved — all viewers will see this data automatically</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo"><div class="lm">Betjeeric Ops</div><div class="ls3">PKR · Operations</div></div>
+  <button class="ubtn" onclick="openU()">📂 Upload New Data</button>
+  <div class="ds nd" id="ss"><span class="sd sb"></span>Loading…</div>
+  <div class="lu hidden" id="lui"></div>
+  <div class="ns">Overview</div>
+  <button class="ni active" onclick="sp('dashboard',this)"><span>📊</span>Dashboard</button>
+  <div class="ns">Deposits</div>
+  <button class="ni" onclick="sp('dp-sum',this)"><span>🏦</span>PG Summary</button>
+  <button class="ni" onclick="sp('dp-daily',this)"><span>📅</span>Daily Breakdown</button>
+  <button class="ni" onclick="sp('dp-stats',this)"><span>📋</span>Daily PG Stats<span class="nb" id="dpb">—</span></button>
+  <div class="ns">Withdrawals</div>
+  <button class="ni" onclick="sp('wd-sum',this)"><span>💸</span>WD Summary</button>
+  <button class="ni" onclick="sp('wd-daily',this)"><span>📆</span>WD Daily</button>
+  <div class="ns">Support Deposits</div>
+  <button class="ni" onclick="sp('support',this)"><span>🛠️</span>Support Overview</button>
+  <button class="ni" onclick="sp('support-daily',this)"><span>📊</span>Support Daily</button>
+  <div class="ns">Agents</div>
+  <button class="ni" onclick="sp('agents',this)"><span>👤</span>Agent Stats<span class="nb" id="agb">—</span></button>
+  <button class="ni" onclick="sp('agent-daily',this)"><span>📆</span>Agent Daily</button>
+  <div class="ns">Analysis</div>
+  <button class="ni" onclick="sp('analysis',this)"><span>🔍</span>Findings</button>
+  <button class="ni" onclick="sp('recos',this)"><span>🎯</span>Recommendations</button>
+  <button class="ni" onclick="sp('scorecard',this)"><span>⭐</span>Scorecard</button>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="page active" id="page-dashboard">
+  <div class="es" id="es-dashboard"><div class="ei">📂</div><h2>No Data Loaded</h2><p>Upload Deposit and Withdrawal CSV files. Data will be saved and shared with all viewers automatically.</p><button class="eb" onclick="openU()">Upload CSV Files</button></div>
+  <div id="dc" class="hidden">
+    <div class="ph"><div class="ph-l">Overview</div><h1>Operations Dashboard</h1>
+      <div class="ph-m"><div class="ph-t">Period: <span id="dper">—</span></div><div class="ph-t">DP: <span id="ddpc">—</span></div><div class="ph-t">WD: <span id="dwdc">—</span></div><div class="ph-t">Total PKR: <span id="dtpk">—</span></div></div>
+    </div>
+    <div class="sec">Deposit KPIs</div><div class="kg" id="dpk"></div>
+    <div class="sec">Withdrawal KPIs</div><div class="kg" id="wdk"></div>
+    <div class="sec">Volume Trends</div>
+    <div class="cg"><div class="cc"><div class="ct">Daily DP Count</div><div style="height:170px"><canvas id="c-ddp"></canvas></div></div>
+    <div class="cc"><div class="ct">Daily WD Count</div><div style="height:170px"><canvas id="c-dwd"></canvas></div></div></div>
+    <div class="cg"><div class="cc"><div class="ct">Hourly DP Traffic</div><div style="height:150px"><canvas id="c-hdp"></canvas></div></div>
+    <div class="cc"><div class="ct">Hourly WD Traffic</div><div style="height:150px"><canvas id="c-hwd"></canvas></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="page-dp-sum">
+  <div class="es" id="es-dps"><div class="ei">🏦</div><h2>No Deposit Data</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="dsc" class="hidden">
+    <div class="ph"><div class="ph-l">Deposits</div><h1>PG Method Performance Summary</h1><p id="dsub"></p></div>
+    <div class="tw"><table class="dt"><thead><tr>
+      <th rowspan="2">PG Method</th><th rowspan="2">Count</th><th rowspan="2">Amount (PKR)</th>
+      <th rowspan="2">Count%</th><th rowspan="2">Amt%</th>
+      <th colspan="3" class="tp">Processing Time</th>
+      <th rowspan="2">≤1m</th><th rowspan="2">1-3m</th><th rowspan="2">3-5m</th>
+      <th rowspan="2">5-10m</th><th rowspan="2">10-15m</th><th rowspan="2">15-30m</th>
+      <th rowspan="2">30-1h</th><th rowspan="2">&gt;1h</th>
+      <th rowspan="2" style="background:#1a0a28!important;color:#a78bfa!important;">Support<br>Txns</th>
+    </tr><tr><th class="tp">Min</th><th class="tp">Avg</th><th class="tp">Max</th></tr></thead>
+    <tbody id="dsb"></tbody><tfoot id="dsf"></tfoot></table></div>
+    <div class="sec">Charts</div>
+    <div class="cc full" style="margin-bottom:11px;"><div class="ct">Processing Time Buckets</div><div style="height:240px"><canvas id="c-bkt"></canvas></div></div>
+    <div class="cg"><div class="cc"><div class="ct">DP Count by PG</div><div style="height:190px"><canvas id="c-dpc"></canvas></div></div>
+    <div class="cc"><div class="ct">DP Amount by PG</div><div style="height:190px"><canvas id="c-dpa"></canvas></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="page-dp-daily">
+  <div class="es" id="es-dpd"><div class="ei">📅</div><h2>No Deposit Data</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="ddc" class="hidden">
+    <div class="ph"><div class="ph-l">Deposits</div><h1>Daily Breakdown</h1></div>
+    <div class="tw"><table class="dt" style="min-width:1100px;"><thead><tr>
+      <th rowspan="2" style="text-align:left">Date</th>
+      <th colspan="7">DP Method Amount (PKR)</th><th colspan="7">DP Method Count</th><th colspan="2" class="to">Overall</th>
+    </tr><tr>
+      <th>LocalBank</th><th>Manual</th><th>Simpaisa</th><th>PayVIP</th><th>ClickPay</th><th>Jeepay</th><th>Ipay</th>
+      <th>LocalBank</th><th>Manual</th><th>Simpaisa</th><th>PayVIP</th><th>ClickPay</th><th>Jeepay</th><th>Ipay</th>
+      <th class="to">Total Amt</th><th class="to">Total Cnt</th>
+    </tr></thead><tbody id="ddb"></tbody><tfoot id="ddf"></tfoot></table></div>
+  </div>
+</div>
+
+<div class="page" id="page-dp-stats">
+  <div class="es" id="es-dpst"><div class="ei">📋</div><h2>No Deposit Data</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="dstc" class="hidden">
+    <div class="ph"><div class="ph-l">Deposits</div><h1>Daily PG Stats</h1></div>
+    <div class="fb2"><span style="font-size:10px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;">Jump:</span>
+      <div class="dn" id="dpnav"></div>
+      <input type="text" class="si" placeholder="Filter by date…" oninput="flt('dpdc',this.value)">
+    </div>
+    <div id="dpdc"></div>
+  </div>
+</div>
+
+<div class="page" id="page-wd-sum">
+  <div class="es" id="es-wds"><div class="ei">💸</div><h2>No Withdrawal Data</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="wsc" class="hidden">
+    <div class="ph"><div class="ph-l">Withdrawals</div><h1>WD Method Performance Summary</h1><p id="wsub"></p></div>
+    <div class="tw"><table class="dt"><thead><tr>
+      <th rowspan="2">WD Method</th><th rowspan="2">Count</th><th rowspan="2">Amount (PKR)</th>
+      <th rowspan="2">Count%</th><th rowspan="2">Amt%</th><th rowspan="2">Approval%</th>
+      <th colspan="3" class="tp">Processing Time</th>
+      <th rowspan="2">≤1m</th><th rowspan="2">1-5m</th><th rowspan="2">5-15m</th><th rowspan="2">&gt;15m</th>
+    </tr><tr><th class="tp">Min</th><th class="tp">Avg</th><th class="tp">Max</th></tr></thead>
+    <tbody id="wsb"></tbody><tfoot id="wsf"></tfoot></table></div>
+    <div class="cg" style="margin-top:11px;"><div class="cc"><div class="ct">WD Count by Method</div><div style="height:190px"><canvas id="c-wdc"></canvas></div></div>
+    <div class="cc"><div class="ct">WD Amount by Method</div><div style="height:190px"><canvas id="c-wda"></canvas></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="page-wd-daily">
+  <div class="es" id="es-wdd"><div class="ei">📆</div><h2>No Withdrawal Data</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="wdc2" class="hidden">
+    <div class="ph"><div class="ph-l">Withdrawals</div><h1>WD Daily Breakdown</h1></div>
+    <div class="tw"><table class="dt" style="min-width:850px;"><thead><tr>
+      <th rowspan="2" style="text-align:left">Date</th>
+      <th colspan="5">WD Method Amount (PKR)</th><th colspan="5">WD Method Count</th><th colspan="2" class="to">Overall</th>
+    </tr><tr>
+      <th>Simpaisa</th><th>ClickPay</th><th>PayVIP</th><th>Jeepay</th><th>Bank</th>
+      <th>Simpaisa</th><th>ClickPay</th><th>PayVIP</th><th>Jeepay</th><th>Bank</th>
+      <th class="to">Total Amt</th><th class="to">Total Cnt</th>
+    </tr></thead><tbody id="wdb"></tbody><tfoot id="wdf"></tfoot></table></div>
+  </div>
+</div>
+
+<div class="page" id="page-analysis">
+  <div class="es" id="es-an"><div class="ei">🔍</div><h2>No Data Loaded</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="anc" class="hidden">
+    <div class="ph"><div class="ph-l">Analysis</div><h1>Operational Analysis</h1><p id="an-sub">Auto-generated from uploaded data</p></div>
+
+    <!-- Health Score Cards -->
+    <div class="sec">Overall Health Scores</div>
+    <div id="an-health-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;"></div>
+
+    <!-- DP vs WD Overview -->
+    <div class="sec">Deposit vs Withdrawal Overview</div>
+    <div id="an-dpwd" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;"></div>
+
+    <!-- Approval Rates -->
+    <div class="sec">1 · Gateway Approval Rates (Deposits)</div>
+    <div class="tc">
+      <div class="cd"><div class="ct2">DP Approval Rate by PG</div><div id="apb"></div>
+        <div style="margin-top:14px;"><div class="ct2">WD Approval Rate by Method</div><div id="an-wd-rate-bars"></div></div>
+      </div>
+      <div id="apf"></div>
+    </div>
+
+    <!-- Processing Speed -->
+    <div class="sec">2 · Processing Speed Analysis</div>
+    <div class="tc">
+      <div class="cd"><div class="ct2">DP Speed & Slow Rate per Gateway</div>
+        <table class="st"><thead><tr><th>PG</th><th>Avg Time</th><th>≤1Min%</th><th>&gt;5Min%</th><th>Status</th></tr></thead><tbody id="spb"></tbody></table>
+        <div style="margin-top:12px;"><div class="ct2">WD Speed per Method</div>
+          <table class="st"><thead><tr><th>Method</th><th>Avg Time</th><th>≤1Min%</th><th>&gt;15Min%</th><th>Status</th></tr></thead><tbody id="an-wd-speed"></tbody></table>
+        </div>
+      </div>
+      <div id="spf"></div>
+    </div>
+
+    <!-- Traffic -->
+    <div class="sec">3 · Traffic Patterns</div>
+    <div class="tc">
+      <div>
+        <div class="cc" style="margin-bottom:11px;"><div class="ct">Hourly DP Volume</div><div style="height:155px"><canvas id="c-ah"></canvas></div></div>
+        <div class="cc"><div class="ct">Hourly WD Volume</div><div style="height:155px"><canvas id="c-an-wd-h"></canvas></div></div>
+      </div>
+      <div id="trf"></div>
+    </div>
+
+    <!-- Agent Analysis -->
+    <div class="sec">4 · Agent Performance Analysis</div>
+    <div class="tc">
+      <div class="cd" style="overflow-x:auto;">
+        <div class="ct2">Agent DP Approval Rate</div>
+        <div id="an-agent-bars"></div>
+      </div>
+      <div id="an-agent-findings"></div>
+    </div>
+
+    <!-- Support Analysis -->
+    <div class="sec">5 · Support Deposit Analysis</div>
+    <div class="tc">
+      <div class="cd">
+        <div class="ct2">Support Txns by Gateway</div>
+        <div id="an-supp-bars"></div>
+        <div style="margin-top:14px;height:160px"><canvas id="c-an-supp"></canvas></div>
+      </div>
+      <div id="an-supp-findings"></div>
+    </div>
+
+    <!-- Anomalies -->
+    <div class="sec">6 · Anomalies & Risk Flags</div>
+    <div id="an-flags" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"></div>
+  </div>
+</div>
+
+<div class="page" id="page-recos">
+  <div class="es" id="es-rc"><div class="ei">🎯</div><h2>No Data Loaded</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="rcc" class="hidden">
+    <div class="ph"><div class="ph-l">Analysis</div><h1>Operational Recommendations</h1><p>Prioritized action items generated from your data</p></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="reco-grid"></div>
+  </div>
+</div>
+
+<div class="page" id="page-scorecard">
+  <div class="es" id="es-sc"><div class="ei">⭐</div><h2>No Data Loaded</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="scc" class="hidden">
+    <div class="ph"><div class="ph-l">Analysis</div><h1>Gateway Performance Scorecard</h1><p id="sc-sub"></p></div>
+
+    <div class="sec">Deposit Gateway Health</div>
+    <div class="tw"><table class="st" id="sc-dp-tbl">
+      <thead><tr><th>PG Method</th><th>Attempts</th><th>Approved</th><th>Approval Rate</th><th>Avg Processing</th><th>≤1 Min%</th><th>&gt;5 Min%</th><th>Avg Ticket (PKR)</th><th>Revenue Share</th><th>Support Txns</th><th>Health</th></tr></thead>
+      <tbody id="scb"></tbody>
+      <tfoot id="sc-dp-foot"></tfoot>
+    </table></div>
+
+    <div class="sec">Withdrawal Gateway Health</div>
+    <div class="tw"><table class="st" id="sc-wd-tbl">
+      <thead><tr><th>WD Method</th><th>Attempts</th><th>Approved</th><th>Approval Rate</th><th>Avg Processing</th><th>≤1 Min%</th><th>&gt;15 Min%</th><th>Avg Ticket (PKR)</th><th>Revenue Share</th><th>Health</th></tr></thead>
+      <tbody id="sc-wd-tbody"></tbody>
+      <tfoot id="sc-wd-foot"></tfoot>
+    </table></div>
+
+    <div class="sec">Agent Performance Scorecard</div>
+    <div class="tw"><table class="st">
+      <thead><tr><th>Agent</th><th>DP Handled</th><th>DP Approval%</th><th>WD Handled</th><th>WD Approval%</th><th>Support Txns</th><th>Total Amt (PKR)</th><th>Avg Proc (DP)</th><th>Days Active</th><th>Rating</th></tr></thead>
+      <tbody id="sc-ag-tbody"></tbody>
+    </table></div>
+
+    <div class="sec">Charts</div>
+    <div class="cg">
+      <div class="cc"><div class="ct">DP vs WD Count by Method</div><div style="height:210px"><canvas id="c-scv"></canvas></div></div>
+      <div class="cc"><div class="ct">DP Approval Rate by Gateway (%)</div><div style="height:210px"><canvas id="c-sca"></canvas></div></div>
+    </div>
+    <div class="cg">
+      <div class="cc"><div class="ct">Agent: DP Approval Rate (%)</div><div style="height:210px"><canvas id="c-sc-ag-rate"></canvas></div></div>
+      <div class="cc"><div class="ct">Agent: Total Amount Processed (PKR)</div><div style="height:210px"><canvas id="c-sc-ag-amt"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT OVERVIEW -->
+<div class="page" id="page-support">
+  <div class="es" id="es-sup"><div class="ei">🛠️</div><h2>No Data Loaded</h2><p>Upload a Deposit CSV to view support deposit statistics.</p><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="supc" class="hidden">
+    <div class="ph"><div class="ph-l">Support Deposits</div><h1>Payment Gateway Support Deposit Report</h1>
+      <p>Manual deposits routed through PG gateways (PayVIP, ClickPay, Jeepay, Simpaisa) — processed directly by agents on behalf of players</p>
+    </div>
+    <div class="sec">Support KPIs</div>
+    <div id="sup-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;"></div>
+
+    <div class="sec">Support Deposit Amount &amp; Count — Summary by Gateway</div>
+    <div class="tw"><table class="dt">
+      <thead><tr>
+        <th>PG Gateway</th>
+        <th>Total Count</th>
+        <th>Total Amount (PKR)</th>
+        <th>Count %</th>
+        <th>Amount %</th>
+        <th>Avg Ticket (PKR)</th>
+        <th>Top Agent</th>
+      </tr></thead>
+      <tbody id="sup-pg-tbody"></tbody>
+      <tfoot id="sup-pg-tfoot"></tfoot>
+    </table></div>
+
+    <div class="sec">Support Deposit Amount &amp; Count — Daily Breakdown</div>
+    <div class="tw"><table class="dt" style="min-width:900px;">
+      <thead><tr>
+        <th rowspan="2" style="text-align:left">Date</th>
+        <th colspan="4">Support Amount (PKR)</th>
+        <th colspan="4">Support Count</th>
+        <th colspan="2" class="to">Overall Support</th>
+      </tr><tr>
+        <th>PayVIP</th><th>ClickPay</th><th>Jeepay</th><th>Simpaisa</th>
+        <th>PayVIP</th><th>ClickPay</th><th>Jeepay</th><th>Simpaisa</th>
+        <th class="to">Total Amt</th><th class="to">Total Cnt</th>
+      </tr></thead>
+      <tbody id="sup-daily-tbody"></tbody>
+      <tfoot id="sup-daily-tfoot"></tfoot>
+    </table></div>
+
+    <div class="sec">Charts</div>
+    <div class="cg">
+      <div class="cc"><div class="ct">Support Count by Gateway</div><div style="height:200px"><canvas id="c-sup-cnt"></canvas></div></div>
+      <div class="cc"><div class="ct">Support Amount by Gateway (PKR)</div><div style="height:200px"><canvas id="c-sup-amt"></canvas></div></div>
+    </div>
+    <div class="cc full"><div class="ct">Daily Support Transaction Count</div><div style="height:180px"><canvas id="c-sup-daily"></canvas></div></div>
+  </div>
+</div>
+
+<!-- SUPPORT DAILY BY AGENT -->
+<div class="page" id="page-support-daily">
+  <div class="es" id="es-supd"><div class="ei">📊</div><h2>No Data Loaded</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="supdc" class="hidden">
+    <div class="ph"><div class="ph-l">Support Deposits</div><h1>Support Deposits by Agent</h1>
+      <p>Per-agent breakdown of manually processed PG gateway deposits</p></div>
+    <div id="sup-agent-tables"></div>
+  </div>
+</div>
+
+<!-- AGENT STATS SUMMARY -->
+<div class="page" id="page-agents">
+  <div class="es" id="es-ag"><div class="ei">👤</div><h2>No Data Loaded</h2><p>Upload a Deposit or Withdrawal CSV to see agent performance statistics.</p><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="agc" class="hidden">
+    <div class="ph"><div class="ph-l">Agents</div><h1>Agent Performance — Manual Transactions</h1><p id="agsub"></p></div>
+
+    <div class="sec">Agent KPI Overview</div>
+    <div id="ag-kpi-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;"></div>
+
+    <div class="sec">Deposit Processing by Agent</div>
+    <div class="tw"><table class="dt" id="ag-dp-tbl">
+      <thead><tr>
+        <th rowspan="2">Agent</th>
+        <th rowspan="2">DP Handled</th>
+        <th rowspan="2">DP Approved</th>
+        <th rowspan="2">DP Rejected</th>
+        <th rowspan="2">Approval%</th>
+        <th rowspan="2">DP Amt (PKR)</th>
+        <th rowspan="2">Avg Ticket</th>
+        <th colspan="3" class="tp">Processing Time</th>
+        <th rowspan="2">≤1m</th>
+        <th rowspan="2">1-3m</th>
+        <th rowspan="2">3-5m</th>
+        <th rowspan="2">&gt;5m</th>
+        <th rowspan="2" style="background:#1a0a28!important;color:#a78bfa!important;">Support<br>Count</th>
+        <th rowspan="2" style="background:#1a0a28!important;color:#a78bfaaa!important;">Support<br>Breakdown</th>
+        <th rowspan="2" style="background:#1a0a28!important;color:#a78bfa!important;">Total Amt<br>incl. Supp</th>
+        <th rowspan="2">Days Active</th>
+        <th rowspan="2">Avg/Day</th>
+      </tr>
+      <tr><th class="tp">Min</th><th class="tp">Avg</th><th class="tp">Max</th></tr>
+      </thead>
+      <tbody id="ag-dp-tbody"></tbody>
+      <tfoot id="ag-dp-tfoot"></tfoot>
+    </table></div>
+
+    <div class="sec">Withdrawal Processing by Agent</div>
+    <div class="tw"><table class="dt" id="ag-wd-tbl">
+      <thead><tr>
+        <th>Agent</th>
+        <th>WD Handled</th>
+        <th>WD Approved</th>
+        <th>WD Rejected</th>
+        <th>Approval%</th>
+        <th>Total Amt (PKR)</th>
+        <th>Avg Ticket</th>
+        <th>Min Proc</th>
+        <th>Avg Proc</th>
+        <th>Max Proc</th>
+        <th>Days Active</th>
+      </tr></thead>
+      <tbody id="ag-wd-tbody"></tbody>
+      <tfoot id="ag-wd-tfoot"></tfoot>
+    </table></div>
+
+    <div class="sec">Combined Agent Scorecard</div>
+    <div class="tw"><table class="st" id="ag-score-tbl">
+      <thead><tr><th>Agent</th><th>Total Txns</th><th>Total Approved</th><th>Overall Rate</th><th>DP Amt (PKR)</th><th>WD Amt (PKR)</th><th style="color:#a78bfa">Support Txns</th><th style="color:#a78bfa">Support Amt</th><th>Combined Amt</th><th>Avg Proc (DP)</th><th>Performance</th></tr></thead>
+      <tbody id="ag-score-tbody"></tbody>
+    </table></div>
+
+    <div class="sec">Agent Charts</div>
+    <div class="cg">
+      <div class="cc"><div class="ct">DP Approved Count by Agent</div><div style="height:200px"><canvas id="c-ag-dp-cnt"></canvas></div></div>
+      <div class="cc"><div class="ct">DP Amount Processed by Agent (PKR)</div><div style="height:200px"><canvas id="c-ag-dp-amt"></canvas></div></div>
+    </div>
+    <div class="cg">
+      <div class="cc"><div class="ct">Approval Rate by Agent (%)</div><div style="height:200px"><canvas id="c-ag-rate"></canvas></div></div>
+      <div class="cc"><div class="ct">Avg Processing Time by Agent (seconds)</div><div style="height:200px"><canvas id="c-ag-time"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT DAILY BREAKDOWN -->
+<div class="page" id="page-agent-daily">
+  <div class="es" id="es-agd"><div class="ei">📆</div><h2>No Data Loaded</h2><button class="eb" onclick="openU()">Upload CSV</button></div>
+  <div id="agdc" class="hidden">
+    <div class="ph"><div class="ph-l">Agents</div><h1>Agent Daily Activity</h1><p>Day-by-day transaction count and amount per agent</p></div>
+    <div class="fb2">
+      <span style="font-size:10px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;">Filter:</span>
+      <input type="text" class="si" id="ag-search" placeholder="Agent name…" oninput="fltAg(this.value)">
+    </div>
+    <div id="ag-daily-tables"></div>
+  </div>
+</div>
+
+</div><!-- .main -->
+
+<script>
+const PGO=['Manual','LocalBank','Ipay','PayVIP','ClickPay','Simpaisa','Jeepay'];
+const PGC={Manual:'#94a3b8',LocalBank:'#22d3ee',Ipay:'#f472b6',PayVIP:'#a78bfa',ClickPay:'#34d399',Simpaisa:'#f97316',Jeepay:'#fbbf24'};
+const DPP=['LocalBank','Manual','Simpaisa','PayVIP','ClickPay','Jeepay','Ipay'];
+const WDP=['Simpaisa','ClickPay','PayVIP','Jeepay','Bank'];
+const WPC={Simpaisa:'#f97316',ClickPay:'#34d399',PayVIP:'#a78bfa',Jeepay:'#fbbf24',Bank:'#22d3ee'};
+const SUPP_PGS=['PayVIP','ClickPay','Jeepay','Simpaisa'];
+const SUPP_C={PayVIP:'#a78bfa',ClickPay:'#34d399',Jeepay:'#fbbf24',Simpaisa:'#f97316'};
+const SK_DP='betjeeric_dp_v4',SK_WD='betjeeric_wd_v4',SK_MT='betjeeric_mt_v4';
+let DP=null,WD=null,dpF=null,wdF=null,CI={};
+
+// ── STORAGE ──
+async function loadStore(){
+  try{
+    const[a,b,c]=await Promise.all([
+      window.storage.get(SK_DP,true).catch(()=>null),
+      window.storage.get(SK_WD,true).catch(()=>null),
+      window.storage.get(SK_MT,true).catch(()=>null)
+    ]);
+    if(a?.value) DP=JSON.parse(a.value);
+    if(b?.value) WD=JSON.parse(b.value);
+    if(c?.value){const m=JSON.parse(c.value);el('lui').textContent='Last upload: '+m.t;sh('lui');}
+  }catch(e){console.warn(e);}
+}
+async function saveStore(nd,nw){
+  const now=new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'});
+  try{
+    if(nd) await window.storage.set(SK_DP,JSON.stringify(nd),true);
+    if(nw) await window.storage.set(SK_WD,JSON.stringify(nw),true);
+    await window.storage.set(SK_MT,JSON.stringify({t:now}),true);
+  }catch(e){console.warn(e);}
+}
+
+// ── UPLOAD ──
+function openU(){el('uo').classList.remove('hidden');}
+function closeU(){el('uo').classList.add('hidden');}
+function dov(e,id){e.preventDefault();el(id).classList.add('dv');}
+function dlv(id){el(id).classList.remove('dv');}
+function drf(e,t){e.preventDefault();const f=e.dataTransfer.files[0];if(f)af(f,t);}
+function fs(inp,t){if(inp.files[0])af(inp.files[0],t);}
+function af(f,t){
+  if(t==='dp'){dpF=f;el('dpN').textContent=f.name;el('zdp').classList.add('ld2');}
+  else{wdF=f;el('wdN').textContent=f.name;el('zwd').classList.add('ld2');}
+  if(dpF||wdF)el('pb').classList.add('ready');
+}
+function sp2(p){el('prb').style.display='block';el('prf').style.width=p+'%';}
+
+async function proc(){
+  const btn=el('pb'); btn.textContent='⏳ Processing…'; btn.classList.remove('ready');
+  sp2(5);
+  try{
+    let nd=null,nw=null;
+    if(dpF){const t=await rf(dpF);sp2(25);nd=parseDP(t);sp2(55);}
+    if(wdF){const t=await rf(wdF);sp2(65);nw=parseWD(t);sp2(78);}
+    btn.textContent='💾 Saving for all viewers…';btn.classList.add('saving');sp2(88);
+    await saveStore(nd,nw);
+    if(nd)DP=nd; if(nw)WD=nw;
+    sp2(100);
+    const now=new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'});
+    el('lui').textContent='Last upload: '+now; sh('lui');
+    el('sm').style.display='block';
+    setTimeout(()=>{
+      build(); closeU(); updSS();
+      btn.textContent='⚡ Process & Save for All Viewers';
+      btn.classList.remove('saving'); el('sm').style.display='none';
+      el('prb').style.display='none'; dpF=null; wdF=null;
+      el('pb').classList.remove('ready');
+      el('zdp').classList.remove('ld2'); el('zwd').classList.remove('ld2');
+      el('dpN').textContent='No file selected'; el('wdN').textContent='No file selected';
+    },1200);
+  }catch(e){console.error(e);btn.textContent='⚡ Process & Save for All Viewers';btn.classList.remove('saving');btn.classList.add('ready');alert('Error: '+e.message);}
+}
+
+function rf(file){return new Promise((r,j)=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.onerror=()=>j(new Error('Read fail'));rd.readAsText(file,'utf-8');});}
+
+// ── PARSE CSV ──
+function pcsv(txt){
+  const ls=txt.split('\n'),hd=spl(ls[0]),rows=[];
+  for(let i=1;i<ls.length;i++){if(!ls[i].trim())continue;const v=spl(ls[i]);const o={};hd.forEach((h,j)=>o[h.trim()]=(v[j]||'').trim());rows.push(o);}
+  return rows;
+}
+function spl(line){const r=[];let c='';let q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){q=!q;}else if(ch===','&&!q){r.push(c);c='';}else{c+=ch;}}r.push(c);return r;}
+
+function gpg(r){
+  const b=(r['To Bank name']||'').toLowerCase(),t=(r['Type']||'').toLowerCase();
+  if(t.includes('payment gateway')||t.includes('pg')){
+    if(b.includes('bkkpks')||b==='simpaisa')return'Simpaisa';
+    if(b.includes('payvip'))return'PayVIP';if(b.includes('clickpay'))return'ClickPay';
+    if(b.includes('jeepay')||b==='jeepay')return'Jeepay';if(b==='ipay')return'Ipay';return'Other';
+  }
+  if(['meezan','faysal','habib','united','js bank','mcb','ubl','hbl','askari'].some(k=>b.includes(k)))return'LocalBank';
+  return'Manual';
+}
+// Returns PG name if this is a SUPPORT deposit (manual Type but routed through PG gateway account)
+function isSupportPG(r){
+  const b=(r['To Bank name']||'').toLowerCase(),t=(r['Type']||'').toLowerCase();
+  if(t.includes('payment gateway'))return null; // normal PG, not support
+  if(b.includes('payvip'))return'PayVIP';
+  if(b.includes('clickpay'))return'ClickPay';
+  if(b.includes('jeepay'))return'Jeepay';
+  if(b.includes('bkkpks')||b==='simpaisa'||b.includes('simpaisa'))return'Simpaisa';
+  return null;
+}
+function gwpg(r){
+  const b=(r['From Bank Name']||'').toLowerCase();
+  if(b.includes('bkkpks'))return'Simpaisa';if(b.includes('clickpay'))return'ClickPay';
+  if(b.includes('payvip'))return'PayVIP';if(b.includes('jeepay'))return'Jeepay';return'Bank';
+}
+function ps(ct,at){try{const a=new Date(ct.replace(/\//g,'-').replace(' ','T')),b=new Date(at.replace(/\//g,'-').replace(' ','T'));const d=(b-a)/1000;return d>=0?d:null;}catch{return null;}}
+function ft(s){if(s==null||isNaN(s))return'—';const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;}
+
+function parseDP(txt){
+  const rows=pcsv(txt);const apv=rows.filter(r=>r['Status']==='Approved');
+  const pg={},pa={};
+  PGO.forEach(p=>{pg[p]={count:0,amount:0,times:[],w1:0,m13:0,m35:0,m510:0,m1015:0,m1530:0,m3060:0,h1:0};pa[p]=0;});
+  rows.forEach(r=>{const p=gpg(r);if(pa[p]!==undefined)pa[p]++;});
+  const hr=new Array(24).fill(0),da={},dc={};
+
+  // Support deposit tracking
+  const suppDailyAmt={},suppDailyCnt={};
+  const suppByAgent={}; // agent -> { pg -> {count,amount} }
+  const suppTotals={}; // pg -> {count,amount}
+  SUPP_PGS.forEach(p=>{suppTotals[p]={count:0,amount:0};});
+
+  apv.forEach(r=>{
+    const p=gpg(r);if(!pg[p])return;
+    const amt=parseFloat(r['Deposit Amount'])||0;
+    pg[p].count++;pg[p].amount+=amt;
+    const t=ps(r['Created Time'],r['Approved / Disapproved Time']);
+    if(t!==null){pg[p].times.push(t);const mn=t/60;
+      if(mn<=1)pg[p].w1++;else if(mn<=3)pg[p].m13++;else if(mn<=5)pg[p].m35++;
+      else if(mn<=10)pg[p].m510++;else if(mn<=15)pg[p].m1015++;else if(mn<=30)pg[p].m1530++;
+      else if(mn<=60)pg[p].m3060++;else pg[p].h1++;
+    }
+    const h=parseInt((r['Created Time']||'').slice(11,13));if(h>=0&&h<24)hr[h]++;
+    const d=(r['Created Time']||'').slice(0,10);
+    if(!da[d]){da[d]={};dc[d]={};}
+    da[d][p]=(da[d][p]||0)+amt;dc[d][p]=(dc[d][p]||0)+1;
+
+    // Check if this is a support deposit
+    const spg=isSupportPG(r);
+    if(spg){
+      if(!suppDailyAmt[d]){suppDailyAmt[d]={};suppDailyCnt[d]={};}
+      suppDailyAmt[d][spg]=(suppDailyAmt[d][spg]||0)+amt;
+      suppDailyCnt[d][spg]=(suppDailyCnt[d][spg]||0)+1;
+      if(suppTotals[spg]){suppTotals[spg].count++;suppTotals[spg].amount+=amt;}
+      const agent=(r['Approved / Disapproved By']||'').trim();
+      if(agent&&agent!=='SYS'&&agent!=='SYS_JOB'){
+        if(!suppByAgent[agent])suppByAgent[agent]={};
+        if(!suppByAgent[agent][spg])suppByAgent[agent][spg]={count:0,amount:0};
+        suppByAgent[agent][spg].count++;suppByAgent[agent][spg].amount+=amt;
+      }
+    }
+  });
+
+  const tc=apv.length,ta=apv.reduce((s,r)=>s+(parseFloat(r['Deposit Amount'])||0),0);
+  const at=PGO.flatMap(p=>pg[p].times);
+  const sum=PGO.map(p=>{const s=pg[p];const tt=s.times;return{pg:p,count:s.count,amount:Math.round(s.amount),
+    countPct:tc?s.count/tc*100:0,amountPct:ta?s.amount/ta*100:0,
+    min:ft(tt.length?Math.min(...tt):null),avg:ft(tt.length?tt.reduce((a,b)=>a+b,0)/tt.length:null),max:ft(tt.length?Math.max(...tt):null),
+    w1:s.w1,m13:s.m13,m35:s.m35,m510:s.m510,m1015:s.m1015,m1530:s.m1530,m3060:s.m3060,h1:s.h1,
+    approvalRate:pa[p]?s.count/pa[p]*100:0,totalAttempts:pa[p]||0,avgTicket:s.count?Math.round(s.amount/s.count):0,
+    supportCount:suppTotals[p]?.count||0};});
+  const tot={count:tc,amount:Math.round(ta),
+    min:ft(at.length?Math.min(...at):null),avg:ft(at.length?at.reduce((a,b)=>a+b,0)/at.length:null),max:ft(at.length?Math.max(...at):null),
+    w1:PGO.reduce((s,p)=>s+pg[p].w1,0),m13:PGO.reduce((s,p)=>s+pg[p].m13,0),
+    m35:PGO.reduce((s,p)=>s+pg[p].m35,0),m510:PGO.reduce((s,p)=>s+pg[p].m510,0),
+    m1015:PGO.reduce((s,p)=>s+pg[p].m1015,0),m1530:PGO.reduce((s,p)=>s+pg[p].m1530,0),
+    m3060:PGO.reduce((s,p)=>s+pg[p].m3060,0),h1:PGO.reduce((s,p)=>s+pg[p].h1,0),
+    supportTotal:SUPP_PGS.reduce((s,p)=>s+(suppTotals[p]?.count||0),0)};
+  const dates=Object.keys(da).sort();
+  const ds=dates.map(d=>{
+    const pr=[];let totC=0,totA=0;const dt=[];const bk={w1:0,m13:0,m35:0,m510:0,m1015:0,m1530:0,m3060:0,h1:0};
+    PGO.forEach(p=>{
+      const c=dc[d]?.[p]||0,a=Math.round(da[d]?.[p]||0);totC+=c;totA+=a;
+      const pt=apv.filter(r=>r['Created Time']?.startsWith(d)&&gpg(r)===p).map(r=>ps(r['Created Time'],r['Approved / Disapproved Time'])).filter(t=>t!==null);
+      dt.push(...pt);const b={w1:0,m13:0,m35:0,m510:0,m1015:0,m1530:0,m3060:0,h1:0};
+      pt.forEach(t=>{const mn=t/60;if(mn<=1)b.w1++;else if(mn<=3)b.m13++;else if(mn<=5)b.m35++;
+        else if(mn<=10)b.m510++;else if(mn<=15)b.m1015++;else if(mn<=30)b.m1530++;else if(mn<=60)b.m3060++;else b.h1++;});
+      Object.keys(bk).forEach(k=>bk[k]+=b[k]);
+      if(c>0)pr.push({pg:p,count:c,amount:a,min:ft(pt.length?Math.min(...pt):null),avg:ft(pt.length?pt.reduce((a,b)=>a+b,0)/pt.length:null),max:ft(pt.length?Math.max(...pt):null),...b});
+    });
+    pr.forEach(r=>{r.countPct=totC?r.count/totC*100:0;r.amountPct=totA?r.amount/totA*100:0;});
+    return{date:d,pgRows:pr,total:{count:totC,amount:totA,...bk,avg:ft(dt.length?dt.reduce((a,b)=>a+b,0)/dt.length:null),min:ft(dt.length?Math.min(...dt):null),max:ft(dt.length?Math.max(...dt):null)}};
+  });
+  return{summary:sum,totalRow:tot,dailyAmt:da,dailyCnt:dc,dailyStats:ds,hourly:hr,dates,
+    dateRange:dates.length?`${dates[0]} → ${dates[dates.length-1]}`:'—',
+    totalCount:tc,totalAmount:Math.round(ta),
+    suppTotals,suppDailyAmt,suppDailyCnt,suppByAgent,
+    suppDates:Object.keys(suppDailyAmt).sort(),
+    _rawRows:rows};
+}
+
+function parseWD(txt){
+  const rows=pcsv(txt);const apv=rows.filter(r=>r['Status']==='Approved');
+  const pg={},pa={};
+  WDP.forEach(p=>{pg[p]={count:0,amount:0,times:[],w1:0,m15:0,m515:0,h1:0};pa[p]=0;});
+  rows.forEach(r=>{const p=gwpg(r);if(pa[p]!==undefined)pa[p]++;});
+  const hr=new Array(24).fill(0),da={},dc={};
+  apv.forEach(r=>{
+    const p=gwpg(r);const amt=parseFloat(r['Amount'])||0;
+    pg[p].count++;pg[p].amount+=amt;
+    const t=ps(r['Created Time'],r['Approved / Disapproved Time']);
+    if(t!==null){pg[p].times.push(t);const mn=t/60;if(mn<=1)pg[p].w1++;else if(mn<=5)pg[p].m15++;else if(mn<=15)pg[p].m515++;else pg[p].h1++;}
+    const h=parseInt((r['Created Time']||'').slice(11,13));if(h>=0&&h<24)hr[h]++;
+    const d=(r['Created Time']||'').slice(0,10);if(!da[d]){da[d]={};dc[d]={};}
+    da[d][p]=(da[d][p]||0)+amt;dc[d][p]=(dc[d][p]||0)+1;
+  });
+  const tc=apv.length,ta=apv.reduce((s,r)=>s+(parseFloat(r['Amount'])||0),0);
+  const at=WDP.flatMap(p=>pg[p].times);
+  const sum=WDP.map(p=>{const s=pg[p];const tt=s.times;return{pg:p,count:s.count,amount:Math.round(s.amount),
+    countPct:tc?s.count/tc*100:0,amountPct:ta?s.amount/ta*100:0,approvalRate:pa[p]?s.count/pa[p]*100:0,
+    min:ft(tt.length?Math.min(...tt):null),avg:ft(tt.length?tt.reduce((a,b)=>a+b,0)/tt.length:null),max:ft(tt.length?Math.max(...tt):null),
+    w1:s.w1,m15:s.m15,m515:s.m515,h1:s.h1};});
+  const tot={count:tc,amount:Math.round(ta),
+    min:ft(at.length?Math.min(...at):null),avg:ft(at.length?at.reduce((a,b)=>a+b,0)/at.length:null),max:ft(at.length?Math.max(...at):null),
+    w1:WDP.reduce((s,p)=>s+pg[p].w1,0),m15:WDP.reduce((s,p)=>s+pg[p].m15,0),m515:WDP.reduce((s,p)=>s+pg[p].m515,0),h1:WDP.reduce((s,p)=>s+pg[p].h1,0)};
+  const dates=Object.keys(da).sort();
+  return{summary:sum,totalRow:tot,dailyAmt:da,dailyCnt:dc,hourly:hr,dates,dateRange:dates.length?`${dates[0]} → ${dates[dates.length-1]}`:'—',totalCount:tc,totalAmount:Math.round(ta),_rawRows:rows};
+}
+
+// ── HELPERS ──
+// Human-readable number: 1,234,567 → 1.23M | 12,345 → 12.3K
+function N(v){
+  if(v==null||v==='') return '-';
+  const n=Number(v);
+  if(isNaN(n)) return '-';
+  if(Math.abs(n)>=1_000_000) return (n/1_000_000).toFixed(2).replace(/\.?0+$/,'')+'M';
+  if(Math.abs(n)>=10_000)    return (n/1_000).toFixed(1).replace(/\.0$/,'')+'K';
+  return n.toLocaleString();
+}
+// Full number with commas — used in totals/footers where precision matters
+function NF(v){
+  if(v==null||v==='') return '-';
+  const n=Number(v); if(isNaN(n)) return '-';
+  return n.toLocaleString();
+}
+const P=v=>v!=null?v.toFixed(2)+'%':'—';
+const F=v=>v!=null?v.toFixed(1)+'%':'—';
+function el(id){return document.getElementById(id);}
+function sh(id){el(id)?.classList.remove('hidden');}
+function hd(id){el(id)?.classList.add('hidden');}
+function mc2(id,type,data,opts={}){
+  if(CI[id])CI[id].destroy();
+  const c=el(id);if(!c)return;
+  CI[id]=new Chart(c,{type,data,options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#5a7090',font:{size:10},boxWidth:10,padding:9}},...(opts.pl||{})},
+    scales:{x:{ticks:{color:'#5a7090',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'},...(opts.sx||{})},
+      y:{ticks:{color:'#5a7090',font:{size:10},callback:v=>v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'},...(opts.sy||{})}},...(opts.ex||{})}});
+}
+function updSS(){
+  const s=el('ss');
+  if(DP||WD){s.className='ds hd';const pts=[];if(DP)pts.push(`DP: ${N(DP.totalCount)}`);if(WD)pts.push(`WD: ${N(WD.totalCount)}`);s.innerHTML=`<span class="sd sg"></span>${pts.join(' · ')}`;}
+  else{s.className='ds nd';s.innerHTML=`<span class="sd sr"></span>No data loaded`;}
+}
+function dateRange2Arr(dates){
+  if(!dates||!dates.length)return[];
+  const s=new Date(dates[0].replace(/\//g,'-')),e=new Date(dates[dates.length-1].replace(/\//g,'-'));
+  const out=[];for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1))out.push(d.toISOString().slice(0,10).replace(/-/g,'/'));
+  return out;
+}
+function fmtD(d){const p=d.split('/');return`${parseInt(p[1])}/${parseInt(p[2])}/${p[0]}`;}
+
+// ── BUILD ──
+function build(){
+  bDash();bDPSum();bDPDaily();bDPStats();bWDSum();bWDDaily();bSupport();bSupportDaily();bAgents();bAgentDaily();bAn();bRecos();bSC();
+}
+
+function bDash(){
+  if(!DP&&!WD)return;hd('es-dashboard');sh('dc');
+  el('dper').textContent=(DP||WD).dateRange;
+  el('ddpc').textContent=DP?N(DP.totalCount):'N/A';
+  el('dwdc').textContent=WD?N(WD.totalCount):'N/A';
+  el('dtpk').textContent=N((DP?.totalAmount||0)+(WD?.totalAmount||0));
+  if(DP){
+    const rj=100-(DP.summary.reduce((s,p)=>s+p.approvalRate*(p.totalAttempts||0),0)/Math.max(1,DP.summary.reduce((s,p)=>s+(p.totalAttempts||0),0)));
+    el('dpk').innerHTML=`
+      <div class="kc blue"><div class="kl">DP Approved</div><div class="kv">${N(DP.totalCount)}</div><div class="ks">Avg ${N(Math.round(DP.totalCount/Math.max(1,DP.dates.length)))}/day</div></div>
+      <div class="kc gold"><div class="kl">Total DP Amount</div><div class="kv">${N(DP.totalAmount)}</div><div class="ks">PKR</div></div>
+      <div class="kc green"><div class="kl">Avg Processing</div><div class="kv">${DP.totalRow.avg}</div><div class="ks">≤1 Min: ${N(DP.totalRow.w1)}</div></div>
+      <div class="kc red"><div class="kl">Avg Rejection</div><div class="kv">${rj.toFixed(1)}%</div><div class="ks">Across all gateways</div></div>
+      <div class="kc purple"><div class="kl">Avg Ticket (PKR)</div><div class="kv">${N(DP.totalCount?Math.round(DP.totalAmount/DP.totalCount):0)}</div><div class="ks">${DP.dates.length} days</div></div>`;
+    const dc=DP.dates.map(d=>Object.values(DP.dailyCnt[d]||{}).reduce((a,b)=>a+b,0));
+    const av=Math.round(dc.reduce((a,b)=>a+b,0)/Math.max(1,dc.length));
+    mc2('c-ddp','bar',{labels:DP.dates.map(d=>{const p=d.split('/');return`${parseInt(p[1])}/${parseInt(p[2])}`;})
+      ,datasets:[{label:'Count',data:dc,backgroundColor:dc.map(v=>v>=av?'rgba(22,163,74,.75)':'rgba(240,64,64,.6)'),borderRadius:2},
+        {label:'Avg',data:Array(dc.length).fill(av),type:'line',borderColor:'#1d6fea',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}]});
+    mc2('c-hdp','bar',{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[{label:'Txns',data:DP.hourly,
+      backgroundColor:DP.hourly.map((_,i)=>(i>=21||i==0)?'rgba(240,64,64,.75)':(i>=17)?'rgba(210,153,34,.7)':'rgba(29,111,234,.55)'),borderRadius:2}]},{pl:{legend:{display:false}}});
+  }
+  if(WD){
+    el('wdk').innerHTML=`
+      <div class="kc blue"><div class="kl">WD Approved</div><div class="kv">${N(WD.totalCount)}</div><div class="ks">Avg ${N(Math.round(WD.totalCount/Math.max(1,WD.dates.length)))}/day</div></div>
+      <div class="kc cyan"><div class="kl">Total WD Amount</div><div class="kv">${N(WD.totalAmount)}</div><div class="ks">PKR</div></div>
+      <div class="kc green"><div class="kl">Avg WD Processing</div><div class="kv">${WD.totalRow.avg}</div><div class="ks">≤1 Min: ${N(WD.totalRow.w1)}</div></div>
+      <div class="kc red"><div class="kl">≤1 Min Rate</div><div class="kv">${WD.totalCount?((WD.totalRow.w1/WD.totalCount)*100).toFixed(1)+'%':'—'}</div><div class="ks">Fast approvals</div></div>
+      <div class="kc purple"><div class="kl">Avg Ticket (PKR)</div><div class="kv">${N(WD.totalCount?Math.round(WD.totalAmount/WD.totalCount):0)}</div><div class="ks">${WD.dates.length} days</div></div>`;
+    const wc=WD.dates.map(d=>Object.values(WD.dailyCnt[d]||{}).reduce((a,b)=>a+b,0));
+    const wa=Math.round(wc.reduce((a,b)=>a+b,0)/Math.max(1,wc.length));
+    mc2('c-dwd','bar',{labels:WD.dates.map(d=>{const p=d.split('/');return`${parseInt(p[1])}/${parseInt(p[2])}`;})
+      ,datasets:[{label:'Count',data:wc,backgroundColor:wc.map(v=>v>=wa?'rgba(34,211,238,.65)':'rgba(139,92,246,.5)'),borderRadius:2},
+        {label:'Avg',data:Array(wc.length).fill(wa),type:'line',borderColor:'#e3b341',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}]});
+    mc2('c-hwd','bar',{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[{label:'Txns',data:WD.hourly,backgroundColor:'rgba(34,211,238,.5)',borderRadius:2}]},{pl:{legend:{display:false}}});
+  }
+}
+
+function bDPSum(){
+  if(!DP){hd('dsc');sh('es-dps');return;}hd('es-dps');sh('dsc');
+  el('dsub').textContent=`${DP.dateRange} · Approved transactions only`;
+  el('dsb').innerHTML=DP.summary.map(r=>`<tr><td><span class="dot" style="background:${PGC[r.pg]||'#fff'}"></span>${r.pg}</td>
+    <td>${N(r.count)}</td><td>${N(r.amount)}</td><td>${P(r.countPct)}</td><td>${P(r.amountPct)}</td>
+    <td>${r.min}</td><td>${r.avg}</td><td>${r.max}</td>
+    <td>${N(r.w1)}</td><td>${N(r.m13)}</td><td>${N(r.m35)}</td>
+    <td>${N(r.m510)}</td><td>${N(r.m1015)}</td><td>${N(r.m1530)}</td><td>${N(r.m3060)}</td><td>${N(r.h1)}</td>
+    <td style="color:${r.supportCount>0?'#a78bfa':'#2a3a52'};font-weight:${r.supportCount>0?'700':'400'}">${r.supportCount>0?NF(r.supportCount):'—'}</td></tr>`).join('');
+  const t=DP.totalRow;
+  el('dsf').innerHTML=`<tr class="tr"><td>Total/Avg</td><td>${NF(t.count)}</td><td>${NF(t.amount)}</td><td>100%</td><td>100%</td>
+    <td>${t.min}</td><td>${t.avg}</td><td>${t.max}</td>
+    <td>${NF(t.w1)}</td><td>${NF(t.m13)}</td><td>${NF(t.m35)}</td>
+    <td>${NF(t.m510)}</td><td>${NF(t.m1015)}</td><td>${NF(t.m1530)}</td><td>${NF(t.m3060)}</td><td>${NF(t.h1)}</td>
+    <td style="color:#a78bfa;font-weight:700">${NF(t.supportTotal||0)}</td></tr>`;
+  const pc=PGO.map(p=>PGC[p]);
+  mc2('c-dpc','bar',{labels:PGO,datasets:[{label:'Count',data:DP.summary.map(r=>r.count),backgroundColor:pc,borderRadius:3}]},{pl:{legend:{display:false}}});
+  mc2('c-dpa','bar',{labels:PGO,datasets:[{label:'Amount',data:DP.summary.map(r=>r.amount),backgroundColor:pc,borderRadius:3}]},{pl:{legend:{display:false}}});
+  const bk=['w1','m13','m35','m510','m1015','m1530'],bl=['≤1m','1-3m','3-5m','5-10m','10-15m','15-30m'],bc=['#1d6fea','#16a34a','#e3b341','#f97316','#f472b6','#f04040'];
+  mc2('c-bkt','bar',{labels:PGO,datasets:bl.map((l,i)=>({label:l,data:DP.summary.map(r=>r[bk[i]]||0),backgroundColor:bc[i],borderRadius:2}))},
+    {sx:{stacked:true},sy:{stacked:true,ticks:{color:'#5a7090',font:{size:10},callback:v=>v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'}},pl:{legend:{labels:{color:'#5a7090',font:{size:10},boxWidth:10,padding:8}}}});
+}
+
+function bDPDaily(){
+  if(!DP){hd('ddc');sh('es-dpd');return;}hd('es-dpd');sh('ddc');
+  const all=dateRange2Arr(DP.dates);
+  el('ddb').innerHTML=all.map(d=>{
+    const has=DP.dailyCnt[d]&&Object.values(DP.dailyCnt[d]).some(v=>v>0);
+    const ta=DPP.reduce((s,p)=>s+(DP.dailyAmt[d]?Math.round(DP.dailyAmt[d][p]||0):0),0);
+    const tc=DPP.reduce((s,p)=>s+(DP.dailyCnt[d]?DP.dailyCnt[d][p]||0:0),0);
+    return`<tr class="${has?'':'nd2'}"><td style="color:${has?'#22d3ee':'#2a3a52'};font-weight:700;font-family:'DM Mono'">${fmtD(d)}</td>
+      ${DPP.map(p=>`<td>${has&&DP.dailyAmt[d]?.[p]?N(Math.round(DP.dailyAmt[d][p])):''}</td>`).join('')}
+      ${DPP.map(p=>`<td>${has&&DP.dailyCnt[d]?.[p]?N(DP.dailyCnt[d][p]):''}</td>`).join('')}
+      <td class="oa">${has?N(ta):''}</td><td class="oc">${has?N(tc):''}</td></tr>`;
+  }).join('');
+  el('ddf').innerHTML=`<tr class="tr"><td>Total</td>
+    ${DPP.map(p=>`<td>${NF(Math.round(DP.dates.reduce((s,d)=>s+(DP.dailyAmt[d]?.[p]||0),0)))}</td>`).join('')}
+    ${DPP.map(p=>`<td>${NF(DP.dates.reduce((s,d)=>s+(DP.dailyCnt[d]?.[p]||0),0))}</td>`).join('')}
+    <td>${NF(DP.totalAmount)}</td><td>${NF(DP.totalCount)}</td></tr>`;
+}
+
+function bDPStats(){
+  if(!DP){hd('dstc');sh('es-dpst');return;}hd('es-dpst');sh('dstc');
+  el('dpb').textContent=DP.dates.length+' days';
+  const nav=el('dpnav');nav.innerHTML='';
+  el('dpdc').innerHTML=DP.dailyStats.map(day=>{
+    const lbl=fmtD(day.date);const t=day.total;
+    const rows=day.pgRows.map(r=>`<tr><td><span class="dot" style="background:${PGC[r.pg]||'#fff'}"></span>${r.pg}</td>
+      <td>${N(r.count)}</td><td>${N(r.amount)}</td><td>${r.countPct.toFixed(1)}%</td><td>${r.amountPct.toFixed(1)}%</td>
+      <td>${r.min}</td><td>${r.avg}</td><td>${r.max}</td>
+      <td>${N(r.w1)}</td><td>${N(r.m13)}</td><td>${N(r.m35)}</td>
+      <td>${N(r.m510)}</td><td>${N(r.m1015)}</td><td>${N(r.m1530)}</td><td>${N(r.m3060)}</td><td>${N(r.h1)}</td></tr>`).join('');
+    return`<div class="db" id="dd-${day.date.replace(/\//g,'_')}">
+      <div class="dh"><span class="dl">📅 ${lbl}</span>
+        <span class="dm">Txns: <b>${N(t.count)}</b> · PKR <b>${N(t.amount)}</b> · Avg: <b>${t.avg}</b> · ≤1m: <b>${N(t.w1)}</b></span></div>
+      <div class="tw" style="border-radius:0 0 8px 8px;border-top:none;">
+        <table class="dt"><thead><tr><th rowspan="2">PG</th><th rowspan="2">Count</th><th rowspan="2">Amount</th>
+          <th rowspan="2">Cnt%</th><th rowspan="2">Amt%</th>
+          <th colspan="3" class="tp">Processing</th><th colspan="8" class="tb">Buckets</th></tr>
+          <tr><th class="tp">Min</th><th class="tp">Avg</th><th class="tp">Max</th>
+          <th class="tb">≤1m</th><th class="tb">1-3m</th><th class="tb">3-5m</th>
+          <th class="tb">5-10m</th><th class="tb">10-15m</th><th class="tb">15-30m</th>
+          <th class="tb">30-1h</th><th class="tb">&gt;1h</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr class="tr"><td>Total</td><td>${NF(t.count)}</td><td>${NF(t.amount)}</td>
+          <td>100%</td><td>100%</td><td>${t.min}</td><td>${t.avg}</td><td>${t.max}</td>
+          <td>${NF(t.w1)}</td><td>${NF(t.m13)}</td><td>${NF(t.m35)}</td>
+          <td>${NF(t.m510)}</td><td>${NF(t.m1015)}</td><td>${NF(t.m1530)}</td>
+          <td>${NF(t.m3060)}</td><td>${NF(t.h1)}</td></tr></tfoot></table></div></div>`;
+  }).join('');
+  DP.dailyStats.forEach(day=>{
+    const p=day.date.split('/');const pi=document.createElement('a');
+    pi.className='dp2';pi.textContent=`${parseInt(p[1])}/${parseInt(p[2])}`;pi.href='#';
+    pi.onclick=e=>{e.preventDefault();el('dd-'+day.date.replace(/\//g,'_'))?.scrollIntoView({behavior:'smooth',block:'start'});};
+    nav.appendChild(pi);
+  });
+}
+
+function bWDSum(){
+  if(!WD){hd('wsc');sh('es-wds');return;}hd('es-wds');sh('wsc');
+  el('wsub').textContent=`${WD.dateRange} · Approved transactions only`;
+  el('wsb').innerHTML=WD.summary.map(r=>`<tr><td><span class="dot" style="background:${WPC[r.pg]||'#fff'}"></span>${r.pg}</td>
+    <td>${N(r.count)}</td><td>${N(r.amount)}</td><td>${P(r.countPct)}</td><td>${P(r.amountPct)}</td><td>${F(r.approvalRate)}</td>
+    <td>${r.min}</td><td>${r.avg}</td><td>${r.max}</td>
+    <td>${N(r.w1)}</td><td>${N(r.m15)}</td><td>${N(r.m515)}</td><td>${N(r.h1)}</td></tr>`).join('');
+  const t=WD.totalRow;
+  el('wsf').innerHTML=`<tr class="tr"><td>Total/Avg</td><td>${NF(t.count)}</td><td>${NF(t.amount)}</td>
+    <td>100%</td><td>100%</td><td>—</td><td>${t.min}</td><td>${t.avg}</td><td>${t.max}</td>
+    <td>${NF(t.w1)}</td><td>${NF(t.m15)}</td><td>${NF(t.m515)}</td><td>${NF(t.h1)}</td></tr>`;
+  const wc=WDP.map(p=>WPC[p]);
+  mc2('c-wdc','bar',{labels:WDP,datasets:[{label:'Count',data:WD.summary.map(r=>r.count),backgroundColor:wc,borderRadius:3}]},{pl:{legend:{display:false}}});
+  mc2('c-wda','bar',{labels:WDP,datasets:[{label:'Amount',data:WD.summary.map(r=>r.amount),backgroundColor:wc,borderRadius:3}]},{pl:{legend:{display:false}}});
+}
+
+function bWDDaily(){
+  if(!WD){hd('wdc2');sh('es-wdd');return;}hd('es-wdd');sh('wdc2');
+  const all=dateRange2Arr(WD.dates);
+  el('wdb').innerHTML=all.map(d=>{
+    const has=WD.dailyCnt[d]&&Object.values(WD.dailyCnt[d]).some(v=>v>0);
+    const ta=WDP.reduce((s,p)=>s+(WD.dailyAmt[d]?Math.round(WD.dailyAmt[d][p]||0):0),0);
+    const tc=WDP.reduce((s,p)=>s+(WD.dailyCnt[d]?WD.dailyCnt[d][p]||0:0),0);
+    return`<tr class="${has?'':'nd2'}"><td style="color:${has?'#22d3ee':'#2a3a52'};font-weight:700;font-family:'DM Mono'">${fmtD(d)}</td>
+      ${WDP.map(p=>`<td>${has&&WD.dailyAmt[d]?.[p]?N(Math.round(WD.dailyAmt[d][p])):''}</td>`).join('')}
+      ${WDP.map(p=>`<td>${has&&WD.dailyCnt[d]?.[p]?N(WD.dailyCnt[d][p]):''}</td>`).join('')}
+      <td class="oa">${has?N(ta):''}</td><td class="oc">${has?N(tc):''}</td></tr>`;
+  }).join('');
+  el('wdf').innerHTML=`<tr class="tr"><td>Total</td>
+    ${WDP.map(p=>`<td>${NF(Math.round(WD.dates.reduce((s,d)=>s+(WD.dailyAmt[d]?.[p]||0),0)))}</td>`).join('')}
+    ${WDP.map(p=>`<td>${NF(WD.dates.reduce((s,d)=>s+(WD.dailyCnt[d]?.[p]||0),0))}</td>`).join('')}
+    <td>${NF(WD.totalAmount)}</td><td>${NF(WD.totalCount)}</td></tr>`;
+}
+
+
+// ── SUPPORT DEPOSITS ──
+function bSupport(){
+  if(!DP?.suppTotals){hd('supc');sh('es-sup');return;}
+  hd('es-sup');sh('supc');
+  const{suppTotals,suppDailyAmt,suppDailyCnt,suppByAgent,suppDates}=DP;
+  const totalSupCount=SUPP_PGS.reduce((s,p)=>s+(suppTotals[p]?.count||0),0);
+  const totalSupAmt=SUPP_PGS.reduce((s,p)=>s+(suppTotals[p]?.amount||0),0);
+
+  // KPIs
+  const topSuppPG=SUPP_PGS.sort((a,b)=>(suppTotals[b]?.count||0)-(suppTotals[a]?.count||0))[0];
+  const topSuppAgent=Object.entries(suppByAgent||{})
+    .map(([a,pgs])=>({a,cnt:Object.values(pgs).reduce((s,v)=>s+v.count,0)}))
+    .sort((a,b)=>b.cnt-a.cnt)[0];
+  el('sup-kpis').innerHTML=`
+    <div class="kc blue"><div class="kl">Total Support Txns</div><div class="kv">${NF(totalSupCount)}</div><div class="ks">All PG gateways</div></div>
+    <div class="kc gold"><div class="kl">Total Support Amount</div><div class="kv">${N(totalSupAmt)}</div><div class="ks">PKR</div></div>
+    <div class="kc purple"><div class="kl">Top Gateway</div><div class="kv" style="font-size:17px">${topSuppPG||'—'}</div><div class="ks">${NF(suppTotals[topSuppPG]?.count||0)} txns</div></div>
+    <div class="kc green"><div class="kl">Top Agent</div><div class="kv" style="font-size:16px">${topSuppAgent?topSuppAgent.a.replace(/^pymt/,'').toUpperCase():'—'}</div><div class="ks">${topSuppAgent?NF(topSuppAgent.cnt)+' support txns':''}</div></div>
+    <div class="kc red"><div class="kl">Avg/Day</div><div class="kv">${NF(Math.round(totalSupCount/Math.max(1,suppDates.length)))}</div><div class="ks">Over ${suppDates.length} active days</div></div>`;
+
+  // PG summary table
+  el('sup-pg-tbody').innerHTML=SUPP_PGS.map(p=>{
+    const s=suppTotals[p]||{count:0,amount:0};
+    const pct=totalSupCount?s.count/totalSupCount*100:0, aPct=totalSupAmt?s.amount/totalSupAmt*100:0;
+    // top agent for this PG
+    const topA=Object.entries(suppByAgent||{})
+      .map(([a,pgs])=>({a,cnt:(pgs[p]?.count||0)})).filter(x=>x.cnt>0)
+      .sort((a,b)=>b.cnt-a.cnt)[0];
+    return`<tr>
+      <td><span class="dot" style="background:${SUPP_C[p]||'#fff'}"></span><strong>${p}</strong></td>
+      <td style="color:#4ade80;font-weight:700">${NF(s.count)}</td>
+      <td style="color:#fde68a;font-weight:700">${N(s.amount)}</td>
+      <td>${pct.toFixed(2)}%</td><td>${aPct.toFixed(2)}%</td>
+      <td>${NF(s.count?Math.round(s.amount/s.count):0)}</td>
+      <td>${topA?`${topA.a.replace(/^pymt/,'').toUpperCase()} (${NF(topA.cnt)})`:'—'}</td>
+    </tr>`;
+  }).join('');
+  el('sup-pg-tfoot').innerHTML=`<tr class="tr"><td>Total</td>
+    <td>${NF(totalSupCount)}</td><td>${N(totalSupAmt)}</td>
+    <td>100%</td><td>100%</td>
+    <td>${NF(totalSupCount?Math.round(totalSupAmt/totalSupCount):0)}</td><td>—</td></tr>`;
+
+  // Daily table — fill all dates in range
+  const allDates=dateRange2Arr(DP.dates);
+  el('sup-daily-tbody').innerHTML=allDates.map(d=>{
+    const hasData=suppDailyCnt[d]&&Object.values(suppDailyCnt[d]).some(v=>v>0);
+    const totA=SUPP_PGS.reduce((s,p)=>s+(suppDailyAmt[d]?.[p]||0),0);
+    const totC=SUPP_PGS.reduce((s,p)=>s+(suppDailyCnt[d]?.[p]||0),0);
+    return`<tr class="${hasData?'':'nd2'}">
+      <td style="color:${hasData?'#22d3ee':'#2a3a52'};font-weight:700;font-family:'DM Mono'">${fmtD(d)}</td>
+      ${SUPP_PGS.map(p=>`<td>${hasData&&suppDailyAmt[d]?.[p]?N(Math.round(suppDailyAmt[d][p])):''}</td>`).join('')}
+      ${SUPP_PGS.map(p=>`<td>${hasData&&suppDailyCnt[d]?.[p]?NF(suppDailyCnt[d][p]):''}</td>`).join('')}
+      <td class="oa">${hasData?N(totA):''}</td><td class="oc">${hasData?NF(totC):''}</td>
+    </tr>`;
+  }).join('');
+  el('sup-daily-tfoot').innerHTML=`<tr class="tr"><td>Total</td>
+    ${SUPP_PGS.map(p=>`<td>${N(Math.round(suppDates.reduce((s,d)=>s+(suppDailyAmt[d]?.[p]||0),0)))}</td>`).join('')}
+    ${SUPP_PGS.map(p=>`<td>${NF(suppDates.reduce((s,d)=>s+(suppDailyCnt[d]?.[p]||0),0))}</td>`).join('')}
+    <td>${N(totalSupAmt)}</td><td>${NF(totalSupCount)}</td></tr>`;
+
+  // Charts
+  mc2('c-sup-cnt','bar',{labels:SUPP_PGS,datasets:[{label:'Support Count',data:SUPP_PGS.map(p=>suppTotals[p]?.count||0),backgroundColor:SUPP_PGS.map(p=>SUPP_C[p]),borderRadius:3}]},{pl:{legend:{display:false}}});
+  mc2('c-sup-amt','bar',{labels:SUPP_PGS,datasets:[{label:'Support Amount',data:SUPP_PGS.map(p=>suppTotals[p]?.amount||0),backgroundColor:SUPP_PGS.map(p=>SUPP_C[p]),borderRadius:3}]},{pl:{legend:{display:false}}});
+  const dailyCounts=allDates.map(d=>SUPP_PGS.reduce((s,p)=>s+(suppDailyCnt[d]?.[p]||0),0));
+  const avgD=Math.round(dailyCounts.reduce((a,b)=>a+b,0)/Math.max(1,dailyCounts.filter(v=>v>0).length));
+  mc2('c-sup-daily','bar',{labels:allDates.map(d=>{const p=d.split('/');return`${parseInt(p[1])}/${parseInt(p[2])}`;}),
+    datasets:[
+      {label:'Support Count',data:dailyCounts,backgroundColor:dailyCounts.map(v=>v>0?'rgba(167,139,250,.75)':'rgba(30,45,66,.5)'),borderRadius:2},
+      {label:'Avg',data:Array(allDates.length).fill(avgD),type:'line',borderColor:'#e3b341',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
+    ]});
+}
+
+function bSupportDaily(){
+  if(!DP?.suppByAgent){hd('supdc');sh('es-supd');return;}
+  hd('es-supd');sh('supdc');
+  const{suppByAgent,suppDailyAmt,suppDailyCnt}=DP;
+  const allDates=dateRange2Arr(DP.dates);
+  // Sort agents by total support count desc
+  const agentsSorted=Object.entries(suppByAgent)
+    .map(([a,pgs])=>({a,total:Object.values(pgs).reduce((s,v)=>s+v.count,0),totalAmt:Object.values(pgs).reduce((s,v)=>s+v.amount,0)}))
+    .sort((a,b)=>b.total-a.total);
+
+  el('sup-agent-tables').innerHTML=agentsSorted.map((ag,idx)=>{
+    const name=ag.a.replace(/^pymt/,'').toUpperCase();
+    const pgs=suppByAgent[ag.a];
+    // Per-agent daily data: need to count from _rawRows
+    const agentRows=(DP._rawRows||[]).filter(r=>r['Status']==='Approved'&&(r['Approved / Disapproved By']||'').trim()===ag.a&&isSupportPG(r));
+    const agDaily={};
+    agentRows.forEach(r=>{
+      const d=r['Created Time'].slice(0,10);const p=isSupportPG(r);const amt=parseFloat(r['Deposit Amount'])||0;
+      if(!agDaily[d])agDaily[d]={};
+      if(!agDaily[d][p])agDaily[d][p]={cnt:0,amt:0};
+      agDaily[d][p].cnt++;agDaily[d][p].amt+=amt;
+    });
+    const pgBreakdown=SUPP_PGS.filter(p=>pgs[p]?.count>0).map(p=>`<span style="background:${SUPP_C[p]}22;border:1px solid ${SUPP_C[p]}55;border-radius:4px;padding:1px 8px;font-size:10px;color:${SUPP_C[p]};margin-right:5px;font-family:'DM Mono'">${p}: ${NF(pgs[p].count)}</span>`).join('');
+    const rows=allDates.map(d=>{
+      const hasData=agDaily[d]&&Object.values(agDaily[d]).some(v=>v.cnt>0);
+      const totC=SUPP_PGS.reduce((s,p)=>s+(agDaily[d]?.[p]?.cnt||0),0);
+      const totA=SUPP_PGS.reduce((s,p)=>s+(agDaily[d]?.[p]?.amt||0),0);
+      return`<tr class="${hasData?'':'nd2'}">
+        <td style="color:${hasData?'#22d3ee':'#2a3a52'};font-weight:700;font-family:'DM Mono'">${fmtD(d)}</td>
+        ${SUPP_PGS.map(p=>`<td style="color:${SUPP_C[p]}">${hasData&&agDaily[d]?.[p]?.cnt?NF(agDaily[d][p].cnt):''}</td>`).join('')}
+        ${SUPP_PGS.map(p=>`<td>${hasData&&agDaily[d]?.[p]?.amt?N(Math.round(agDaily[d][p].amt)):''}</td>`).join('')}
+        <td class="oc">${hasData?NF(totC):''}</td><td class="oa">${hasData?N(totA):''}</td>
+      </tr>`;
+    }).join('');
+    const totByPGCnt=SUPP_PGS.map(p=>NF(allDates.reduce((s,d)=>s+(agDaily[d]?.[p]?.cnt||0),0)));
+    const totByPGAmt=SUPP_PGS.map(p=>N(Math.round(allDates.reduce((s,d)=>s+(agDaily[d]?.[p]?.amt||0),0))));
+    return`<div class="db" style="margin-bottom:20px;">
+      <div class="dh">
+        <span class="dl">👤 ${name}</span>
+        <span class="dm">Total: <b>${NF(ag.total)}</b> support txns &nbsp;·&nbsp; Amount: <b>PKR ${N(ag.totalAmt)}</b></span>
+      </div>
+      <div style="padding:8px 14px;background:var(--sur2);border-left:1px solid var(--acc);border-right:1px solid var(--acc);border-bottom:1px solid var(--brd);">
+        ${pgBreakdown}
+      </div>
+      <div class="tw" style="border-radius:0 0 8px 8px;border-top:none;">
+        <table class="dt" style="min-width:700px;"><thead><tr>
+          <th style="text-align:left">Date</th>
+          ${SUPP_PGS.map(p=>`<th style="background:${SUPP_C[p]}22!important;color:${SUPP_C[p]}!important">${p} (Cnt)</th>`).join('')}
+          ${SUPP_PGS.map(p=>`<th style="background:${SUPP_C[p]}11!important;color:${SUPP_C[p]}99!important">${p} (Amt)</th>`).join('')}
+          <th class="to">Total Cnt</th><th class="to">Total Amt</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr class="tr"><td>Total</td>
+          ${totByPGCnt.map(v=>`<td>${v}</td>`).join('')}
+          ${totByPGAmt.map(v=>`<td>${v}</td>`).join('')}
+          <td>${NF(ag.total)}</td><td>${N(ag.totalAmt)}</td>
+        </tr></tfoot></table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── AGENT PARSING ──
+const HUMAN_COLOR=['#1d6fea','#16a34a','#e3b341','#f97316','#8b5cf6','#f472b6','#22d3ee','#f04040','#34d399','#fbbf24'];
+
+function parseAgents(dpRows, wdRows){
+  // collect all human agents from both files
+  const dpAll = dpRows || [];
+  const wdAll = wdRows || [];
+  const agentSet = new Set();
+  [...dpAll,...wdAll].forEach(r=>{
+    const a=(r['Approved / Disapproved By']||'').trim();
+    if(a && a!=='SYS' && a!=='SYS_JOB') agentSet.add(a);
+  });
+  const agents = [...agentSet].sort();
+
+  // clean display name
+  const cleanName = a => a.replace(/^pymt/,'').replace(/^wfh/,'').replace(/^wfh/,'').toUpperCase();
+
+  const dpStats = {};
+  agents.forEach(agent=>{
+    const all = dpAll.filter(r=>(r['Approved / Disapproved By']||'').trim()===agent);
+    const apv = all.filter(r=>r['Status']==='Approved');
+    const rej = all.filter(r=>['Disapproved','Rejected'].includes(r['Status']));
+    const times = apv.map(r=>ps(r['Created Time'],r['Approved / Disapproved Time'])).filter(t=>t!==null);
+    const amount = apv.reduce((s,r)=>s+(parseFloat(r['Deposit Amount'])||0),0);
+    const daily = {};
+    apv.forEach(r=>{ const d=(r['Created Time']||'').slice(0,10); daily[d]=(daily[d]||0)+1; });
+    const daysActive = Object.keys(daily).length;
+    const w1=times.filter(t=>t/60<=1).length, m13=times.filter(t=>t/60>1&&t/60<=3).length;
+    const m35=times.filter(t=>t/60>3&&t/60<=5).length, gt5=times.filter(t=>t/60>5).length;
+    dpStats[agent]={
+      name:cleanName(agent), raw:agent,
+      total:all.length, approved:apv.length, rejected:rej.length,
+      approvalRate:all.length?apv.length/all.length*100:0,
+      amount:Math.round(amount), avgTicket:apv.length?Math.round(amount/apv.length):0,
+      min:ft(times.length?Math.min(...times):null),
+      avg:ft(times.length?times.reduce((a,b)=>a+b,0)/times.length:null),
+      avgSecs:times.length?Math.round(times.reduce((a,b)=>a+b,0)/times.length):0,
+      max:ft(times.length?Math.max(...times):null),
+      w1,m13,m35,gt5, daysActive,
+      avgPerDay:daysActive?Math.round(apv.length/daysActive):0,
+      daily
+    };
+  });
+
+  const wdStats = {};
+  agents.forEach(agent=>{
+    const all = wdAll.filter(r=>(r['Approved / Disapproved By']||'').trim()===agent);
+    const apv = all.filter(r=>r['Status']==='Approved');
+    const rej = all.filter(r=>['Disapproved','Rejected'].includes(r['Status']));
+    const times = apv.map(r=>ps(r['Created Time'],r['Approved / Disapproved Time'])).filter(t=>t!==null);
+    const amount = apv.reduce((s,r)=>s+(parseFloat(r['Amount'])||0),0);
+    const daily = {};
+    apv.forEach(r=>{ const d=(r['Created Time']||'').slice(0,10); daily[d]=(daily[d]||0)+1; });
+    wdStats[agent]={
+      name:cleanName(agent), raw:agent,
+      total:all.length, approved:apv.length, rejected:rej.length,
+      approvalRate:all.length?apv.length/all.length*100:0,
+      amount:Math.round(amount), avgTicket:apv.length?Math.round(amount/apv.length):0,
+      min:ft(times.length?Math.min(...times):null),
+      avg:ft(times.length?times.reduce((a,b)=>a+b,0)/times.length:null),
+      max:ft(times.length?Math.max(...times):null),
+      daysActive:Object.keys(daily).length,
+      daily
+    };
+  });
+
+  // all dates union
+  const allDates = [...new Set([
+    ...Object.values(dpStats).flatMap(s=>Object.keys(s.daily)),
+    ...Object.values(wdStats).flatMap(s=>Object.keys(s.daily))
+  ])].sort();
+
+  return {agents, dpStats, wdStats, allDates};
+}
+
+// ── BUILD AGENTS PAGE ──
+function bAgents(){
+  if(!DP&&!WD){hd('agc');sh('es-ag');return;}
+  // parse from raw rows stored in DP/WD objects
+  const agData = parseAgents(DP?._rawRows||[], WD?._rawRows||[]);
+  if(!agData.agents.length){hd('agc');sh('es-ag');return;}
+  hd('es-ag');sh('agc');
+  const {agents,dpStats,wdStats}=agData;
+  el('agb').textContent=agents.length+' agents';
+  el('agsub').textContent=`${agents.length} agents · Manual & LocalBank deposit processing · April 1–22, 2026`;
+
+  // KPI cards
+  const totalDPApv = agents.reduce((s,a)=>s+(dpStats[a]?.approved||0),0);
+  const totalDPAmt = agents.reduce((s,a)=>s+(dpStats[a]?.amount||0),0);
+  const totalWDApv = agents.reduce((s,a)=>s+(wdStats[a]?.approved||0),0);
+  const bestAgent = agents.filter(a=>dpStats[a]?.approved>0).sort((a,b)=>(dpStats[b]?.approved||0)-(dpStats[a]?.approved||0))[0];
+  const fastestAgent = agents.filter(a=>dpStats[a]?.avgSecs>0).sort((a,b)=>(dpStats[a]?.avgSecs||9999)-(dpStats[b]?.avgSecs||9999))[0];
+  el('ag-kpi-grid').innerHTML=`
+    <div class="kc blue"><div class="kl">Total DP Processed</div><div class="kv">${N(totalDPApv)}</div><div class="ks">By ${agents.length} agents</div></div>
+    <div class="kc gold"><div class="kl">Total DP Amount</div><div class="kv">${N(totalDPAmt)}</div><div class="ks">PKR — manually approved</div></div>
+    <div class="kc cyan"><div class="kl">Total WD Processed</div><div class="kv">${N(totalWDApv)}</div><div class="ks">Withdrawal approvals</div></div>
+    <div class="kc purple"><div class="kl">Support Txns Handled</div><div class="kv">${N(Object.values(agData.dpStats).reduce((s,a)=>s+(Object.values((DP.suppByAgent||{})[a.raw]||{}).reduce((x,v)=>x+v.count,0)),0))}</div><div class="ks">PG support deposits</div></div>
+    <div class="kc green"><div class="kl">Top Agent (DP)</div><div class="kv" style="font-size:16px">${bestAgent?dpStats[bestAgent].name:'—'}</div><div class="ks">${bestAgent?N(dpStats[bestAgent].approved)+' approved':''}</div></div>`;
+
+  // DP table — add Support column
+  const dpSorted = agents.filter(a=>dpStats[a]?.total>0).sort((a,b)=>(dpStats[b]?.approved||0)-(dpStats[a]?.approved||0));
+  el('ag-dp-tbody').innerHTML = dpSorted.map((agent,i)=>{
+    const s=dpStats[agent];
+    const rateColor = s.approvalRate>=70?'#4ade80':s.approvalRate>=50?'#fbbf24':'#f87171';
+    const suppPGs=DP?.suppByAgent?.[agent]||{};
+    const suppTotal=Object.values(suppPGs).reduce((x,v)=>x+v.count,0);
+    const suppAmt=Object.values(suppPGs).reduce((x,v)=>x+v.amount,0);
+    const suppBreak=SUPP_PGS.filter(p=>suppPGs[p]?.count>0)
+      .map(p=>`<span style="color:${SUPP_C[p]};font-size:9px">${p}:${NF(suppPGs[p].count)}</span>`).join(' ');
+    return `<tr>
+      <td><span class="dot" style="background:${HUMAN_COLOR[i%HUMAN_COLOR.length]}"></span><strong>${s.name}</strong><div style="font-size:9px;color:var(--mut);font-family:'DM Mono'">${s.raw}</div></td>
+      <td>${N(s.total)}</td>
+      <td style="color:#4ade80;font-weight:700">${N(s.approved)}</td>
+      <td style="color:#f87171">${N(s.rejected)}</td>
+      <td style="color:${rateColor};font-weight:700">${s.approvalRate.toFixed(1)}%</td>
+      <td>${N(s.amount)}</td>
+      <td>${N(s.avgTicket)}</td>
+      <td>${s.min}</td><td>${s.avg}</td><td>${s.max}</td>
+      <td>${N(s.w1)}</td><td>${N(s.m13)}</td><td>${N(s.m35)}</td>
+      <td style="color:${s.gt5>10?'#f87171':'#5a7090'}">${N(s.gt5)}</td>
+      <td style="color:#a78bfa;font-weight:700">${suppTotal?NF(suppTotal):'—'}</td>
+      <td style="color:#a78bfaaa;font-size:10px">${suppBreak||'—'}</td>
+      <td>${N(s.amount+suppAmt)}</td>
+      <td>${s.daysActive}</td>
+      <td>${N(s.avgPerDay)}</td>
+    </tr>`;
+  }).join('');
+
+  const dpTotAmt = dpSorted.reduce((s,a)=>s+(dpStats[a]?.amount||0),0);
+  const dpTotApv = dpSorted.reduce((s,a)=>s+(dpStats[a]?.approved||0),0);
+  const dpTotAll = dpSorted.reduce((s,a)=>s+(dpStats[a]?.total||0),0);
+  const dpTotSupp = dpSorted.reduce((s,a)=>s+Object.values(DP?.suppByAgent?.[a]||{}).reduce((x,v)=>x+v.count,0),0);
+  el('ag-dp-tfoot').innerHTML=`<tr class="tr"><td>Total</td><td>${NF(dpTotAll)}</td><td>${NF(dpTotApv)}</td>
+    <td>${NF(dpTotAll-dpTotApv)}</td><td>${dpTotAll?((dpTotApv/dpTotAll)*100).toFixed(1)+'%':'—'}</td>
+    <td>${NF(dpTotAmt)}</td><td>${dpTotApv?NF(Math.round(dpTotAmt/dpTotApv)):'—'}</td>
+    <td colspan="7">—</td>
+    <td style="color:#a78bfa;font-weight:700">${NF(dpTotSupp)}</td><td>—</td><td>—</td><td colspan="2">—</td></tr>`;
+
+  // WD table
+  const wdSorted = agents.filter(a=>wdStats[a]?.total>0).sort((a,b)=>(wdStats[b]?.approved||0)-(wdStats[a]?.approved||0));
+  el('ag-wd-tbody').innerHTML = wdSorted.map((agent,i)=>{
+    const s=wdStats[agent];
+    const rateColor = s.approvalRate>=80?'#4ade80':s.approvalRate>=60?'#fbbf24':'#f87171';
+    return `<tr>
+      <td><span class="dot" style="background:${HUMAN_COLOR[i%HUMAN_COLOR.length]}"></span><strong>${s.name}</strong></td>
+      <td>${N(s.total)}</td>
+      <td style="color:#4ade80;font-weight:700">${N(s.approved)}</td>
+      <td style="color:#f87171">${N(s.rejected)}</td>
+      <td style="color:${rateColor};font-weight:700">${s.approvalRate.toFixed(1)}%</td>
+      <td>${N(s.amount)}</td>
+      <td>${N(s.avgTicket)}</td>
+      <td>${s.min}</td><td>${s.avg}</td><td>${s.max}</td>
+      <td>${s.daysActive}</td>
+    </tr>`;
+  }).join('');
+  const wdTotAmt = wdSorted.reduce((s,a)=>s+(wdStats[a]?.amount||0),0);
+  const wdTotApv = wdSorted.reduce((s,a)=>s+(wdStats[a]?.approved||0),0);
+  const wdTotAll = wdSorted.reduce((s,a)=>s+(wdStats[a]?.total||0),0);
+  el('ag-wd-tfoot').innerHTML=`<tr class="tr"><td>Total</td><td>${NF(wdTotAll)}</td><td>${NF(wdTotApv)}</td>
+    <td>${NF(wdTotAll-wdTotApv)}</td><td>${wdTotAll?((wdTotApv/wdTotAll)*100).toFixed(1)+'%':'—'}</td>
+    <td>${NF(wdTotAmt)}</td><td>${wdTotApv?NF(Math.round(wdTotAmt/wdTotApv)):'—'}</td>
+    <td colspan="4">—</td></tr>`;
+
+  // Scorecard
+  el('ag-score-tbody').innerHTML = agents.filter(a=>(dpStats[a]?.total||0)+(wdStats[a]?.total||0)>0)
+    .sort((a,b)=>((dpStats[b]?.approved||0)+(wdStats[b]?.approved||0))-((dpStats[a]?.approved||0)+(wdStats[a]?.approved||0)))
+    .map((agent,i)=>{
+      const dp=dpStats[agent]||{}, wd=wdStats[agent]||{};
+      const totAll=(dp.total||0)+(wd.total||0), totApv=(dp.approved||0)+(wd.approved||0);
+      const overallRate=totAll?totApv/totAll*100:0;
+      const suppPGs=DP?.suppByAgent?.[agent]||{};
+      const suppCnt=Object.values(suppPGs).reduce((s,v)=>s+v.count,0);
+      const suppAmt=Object.values(suppPGs).reduce((s,v)=>s+v.amount,0);
+      const perf = overallRate>=75&&(dp.avgSecs||999)<300 ? '<span class="pl pg">⭐ Top</span>'
+        : overallRate>=60 ? '<span class="pl pa">✅ Good</span>'
+        : overallRate>=40 ? '<span class="pl pb">⚠️ Fair</span>'
+        : '<span class="pl pr">⬇️ Low</span>';
+      return `<tr>
+        <td><span class="dot" style="background:${HUMAN_COLOR[i%HUMAN_COLOR.length]}"></span><strong>${dp.name||wd.name||agent}</strong></td>
+        <td>${NF(totAll)}</td><td>${NF(totApv)}</td>
+        <td style="color:${overallRate>=70?'#4ade80':overallRate>=50?'#fbbf24':'#f87171'};font-weight:700">${overallRate.toFixed(1)}%</td>
+        <td>${N(dp.amount||0)}</td><td>${N(wd.amount||0)}</td>
+        <td style="color:#a78bfa;font-weight:700">${suppCnt?NF(suppCnt):'—'}</td>
+        <td style="color:#a78bfaaa">${suppAmt?N(suppAmt):'—'}</td>
+        <td style="color:#e3b341;font-weight:700">${N((dp.amount||0)+(wd.amount||0)+(suppAmt||0))}</td>
+        <td>${dp.avg||'—'}</td><td>${perf}</td>
+      </tr>`;
+    }).join('');
+
+  // Charts
+  const chartAgents = dpSorted.slice(0,10);
+  const agColors = chartAgents.map((_,i)=>HUMAN_COLOR[i%HUMAN_COLOR.length]);
+  const agLabels = chartAgents.map(a=>dpStats[a].name);
+  mc2('c-ag-dp-cnt','bar',{labels:agLabels,datasets:[{label:'DP Approved',data:chartAgents.map(a=>dpStats[a].approved),backgroundColor:agColors,borderRadius:3}]},{pl:{legend:{display:false}}});
+  mc2('c-ag-dp-amt','bar',{labels:agLabels,datasets:[{label:'Amount (PKR)',data:chartAgents.map(a=>dpStats[a].amount),backgroundColor:agColors,borderRadius:3}]},{pl:{legend:{display:false}}});
+  mc2('c-ag-rate','bar',{labels:agLabels,datasets:[{label:'Approval Rate %',data:chartAgents.map(a=>dpStats[a].approvalRate),
+    backgroundColor:chartAgents.map(a=>dpStats[a].approvalRate>=70?'rgba(22,163,74,.8)':dpStats[a].approvalRate>=50?'rgba(210,153,34,.8)':'rgba(240,64,64,.8)'),borderRadius:3}]},
+    {sy:{ticks:{color:'#5a7090',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'}},pl:{legend:{display:false}}});
+  mc2('c-ag-time','bar',{labels:agLabels,datasets:[{label:'Avg Proc (secs)',data:chartAgents.map(a=>dpStats[a].avgSecs||0),
+    backgroundColor:chartAgents.map(a=>(dpStats[a].avgSecs||0)<120?'rgba(22,163,74,.8)':(dpStats[a].avgSecs||0)<300?'rgba(210,153,34,.8)':'rgba(240,64,64,.8)'),borderRadius:3}]},
+    {pl:{legend:{display:false}}});
+}
+
+function bAgentDaily(){
+  if(!DP&&!WD){hd('agdc');sh('es-agd');return;}
+  const agData = parseAgents(DP?._rawRows||[], WD?._rawRows||[]);
+  if(!agData.agents.length){hd('agdc');sh('es-agd');return;}
+  hd('es-agd');sh('agdc');
+  const {agents,dpStats,wdStats,allDates}=agData;
+
+  el('ag-daily-tables').innerHTML = agents.filter(a=>(dpStats[a]?.total||0)+(wdStats[a]?.total||0)>0)
+    .sort((a,b)=>((dpStats[b]?.approved||0)+(wdStats[b]?.approved||0))-((dpStats[a]?.approved||0)+(wdStats[a]?.approved||0)))
+    .map(agent=>{
+      const dp=dpStats[agent]||{}, wd=wdStats[agent]||{};
+      const dispName = dp.name||wd.name||agent;
+      const rows = allDates.map(d=>{
+        const dpC=dp.daily?.[d]||0, wdC=wd.daily?.[d]||0;
+        if(dpC===0&&wdC===0) return `<tr class="nd2"><td style="color:#2a3a52;font-family:'DM Mono'">${fmtD(d)}</td><td>—</td><td>—</td><td>—</td></tr>`;
+        return `<tr>
+          <td style="color:#22d3ee;font-weight:700;font-family:'DM Mono'">${fmtD(d)}</td>
+          <td style="color:#4ade80">${dpC?NF(dpC):'—'}</td>
+          <td style="color:#22d3ee">${wdC?NF(wdC):'—'}</td>
+          <td style="color:#e3b341;font-weight:700">${NF(dpC+wdC)}</td>
+        </tr>`;
+      }).join('');
+      const totalDP=Object.values(dp.daily||{}).reduce((a,b)=>a+b,0);
+      const totalWD=Object.values(wd.daily||{}).reduce((a,b)=>a+b,0);
+      return `<div class="db ag-day-block" data-agent="${dispName.toLowerCase()}" style="margin-bottom:18px;">
+        <div class="dh">
+          <span class="dl">👤 ${dispName}</span>
+          <span class="dm">DP: <b>${NF(dp.approved||0)}</b> approved &nbsp;·&nbsp; WD: <b>${NF(wd.approved||0)}</b> approved &nbsp;·&nbsp; DP Amt: <b>PKR ${N(dp.amount||0)}</b> &nbsp;·&nbsp; Rate: <b>${dp.total?(dp.approved/dp.total*100).toFixed(1)+'%':'—'}</b></span>
+        </div>
+        <div class="tw" style="border-radius:0 0 8px 8px;border-top:none;">
+          <table class="dt" style="min-width:400px;">
+            <thead><tr>
+              <th style="text-align:left">Date</th>
+              <th style="background:#0d2a1f!important;color:#6ee7b7!important;">DP Approved</th>
+              <th style="background:#0a1525!important;color:#7dd3fc!important;">WD Approved</th>
+              <th class="to">Total</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+            <tfoot><tr class="tr"><td>Total</td><td>${NF(totalDP)}</td><td>${NF(totalWD)}</td><td>${NF(totalDP+totalWD)}</td></tr></tfoot>
+          </table>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function fltAg(q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll('.ag-day-block').forEach(b=>{
+    const a=b.dataset.agent||'';
+    b.classList.toggle('hidden',q!==''&&!a.includes(q));
+  });
+}
+
+function bAn(){
+  if(!DP&&!WD){hd('anc');sh('es-an');return;}hd('es-an');sh('anc');
+  const totalAttempts=DP?DP.summary.reduce((s,r)=>s+r.totalAttempts,0):0;
+  const overallApvRate=DP?DP.totalCount/totalAttempts*100:0;
+  const rejCount=DP?totalAttempts-DP.totalCount:0;
+  el('an-sub').textContent=`${DP?DP.dateRange:''} · ${NF(totalAttempts)} total DP attempts · ${NF(DP?.totalCount||0)} approved · ${WD?NF(WD.totalCount)+' WD approved':''}`;
+
+  // ── HEALTH SCORES ──
+  const dpHealth = overallApvRate>=75?'🟢':overallApvRate>=60?'🟡':'🔴';
+  const dpAvgSecs = DP?DP.totalRow.avg:'—';
+  const wdApvRate = WD?WD.totalCount/(WD.summary.reduce((s,r)=>s+r.total,0))*100:null;
+  const wdHealth = wdApvRate>=90?'🟢':wdApvRate>=80?'🟡':'🔴';
+
+  // Agent overall rate
+  const agData=parseAgents(DP?._rawRows||[],WD?._rawRows||[]);
+  const agRates=Object.values(agData.dpStats).filter(s=>s.total>0).map(s=>s.approvalRate);
+  const avgAgRate=agRates.length?agRates.reduce((a,b)=>a+b,0)/agRates.length:0;
+  const suppTotal=DP?SUPP_PGS.reduce((s,p)=>s+(DP.suppTotals[p]?.count||0),0):0;
+
+  el('an-health-grid').innerHTML=`
+    <div class="kc ${overallApvRate>=75?'green':overallApvRate>=60?'gold':'red'}">
+      <div class="kl">DP Approval Rate</div>
+      <div class="kv">${overallApvRate.toFixed(1)}%</div>
+      <div class="ks">${dpHealth} ${overallApvRate>=75?'Healthy':overallApvRate>=60?'Needs Attention':'Critical'} · ${NF(rejCount)} failed</div>
+    </div>
+    <div class="kc ${wdApvRate&&wdApvRate>=90?'green':wdApvRate&&wdApvRate>=80?'gold':'red'}">
+      <div class="kl">WD Approval Rate</div>
+      <div class="kv">${wdApvRate?wdApvRate.toFixed(1)+'%':'—'}</div>
+      <div class="ks">${wdHealth} ${WD?NF(WD.totalCount)+' approved':''}</div>
+    </div>
+    <div class="kc ${DP&&DP.totalRow.w1/DP.totalCount>0.6?'green':'gold'}">
+      <div class="kl">DP Speed (≤1 Min)</div>
+      <div class="kv">${DP?(DP.totalRow.w1/DP.totalCount*100).toFixed(1)+'%':'—'}</div>
+      <div class="ks">Avg: ${DP?DP.totalRow.avg:'—'} &nbsp;·&nbsp; Max: ${DP?DP.totalRow.max:'—'}</div>
+    </div>
+    <div class="kc ${avgAgRate>=70?'green':avgAgRate>=50?'gold':'red'}">
+      <div class="kl">Agent Avg Rate</div>
+      <div class="kv">${avgAgRate.toFixed(1)}%</div>
+      <div class="ks">${agRates.length} active agents</div>
+    </div>
+    <div class="kc purple">
+      <div class="kl">Support Deposits</div>
+      <div class="kv">${NF(suppTotal)}</div>
+      <div class="ks">Via PG gateways · PKR ${N(SUPP_PGS.reduce((s,p)=>s+(DP?.suppTotals[p]?.amount||0),0))}</div>
+    </div>`;
+
+  // ── DP vs WD OVERVIEW ──
+  if(DP&&WD){
+    const dpWdRatio=(DP.totalCount/WD.totalCount).toFixed(1);
+    const dpAmtRatio=(DP.totalAmount/WD.totalAmount).toFixed(2);
+    el('an-dpwd').innerHTML=`
+      <div class="cd">
+        <div class="ct2">Deposit Summary</div>
+        <div class="fi in"><div class="fi-i">📥</div><div class="fb"><h4>${NF(DP.totalCount)} Approved Deposits — PKR ${N(DP.totalAmount)}</h4>
+        <p>Overall approval rate: <strong>${overallApvRate.toFixed(1)}%</strong> · Avg ticket: <strong>PKR ${N(Math.round(DP.totalAmount/DP.totalCount))}</strong> · Avg processing: <strong>${DP.totalRow.avg}</strong><br>
+        ${NF(rejCount)} failed attempts represent an estimated <strong>PKR ${N(Math.round(rejCount*DP.totalAmount/DP.totalCount))}</strong> in potential lost revenue.</p></div></div>
+        <div class="fi in"><div class="fi-i">🏦</div><div class="fb"><h4>LocalBank drives ${DP.summary.find(r=>r.pg==='LocalBank')?.amountPct.toFixed(1)||0}% of revenue from only ${DP.summary.find(r=>r.pg==='LocalBank')?.countPct.toFixed(1)||0}% of transactions</h4>
+        <p>Avg LocalBank ticket: <strong>PKR ${N(DP.summary.find(r=>r.pg==='LocalBank')?.avgTicket||0)}</strong> vs overall avg <strong>PKR ${N(Math.round(DP.totalAmount/DP.totalCount))}</strong>. High-value deposits deserve priority processing.</p></div></div>
+      </div>
+      <div class="cd">
+        <div class="ct2">Withdrawal Summary</div>
+        <div class="fi in"><div class="fi-i">📤</div><div class="fb"><h4>${NF(WD.totalCount)} Approved Withdrawals — PKR ${N(WD.totalAmount)}</h4>
+        <p>Approval rate: <strong>${wdApvRate.toFixed(1)}%</strong> · Avg ticket: <strong>PKR ${N(Math.round(WD.totalAmount/WD.totalCount))}</strong> · Avg processing: <strong>${WD.totalRow.avg}</strong><br>
+        DP:WD ratio is <strong>${dpWdRatio}:1</strong> — for every withdrawal, ${dpWdRatio} deposits occur. Amount ratio: <strong>${dpAmtRatio}x</strong>.</p></div></div>
+        <div class="fi ${parseFloat(WD.totalRow.avg)>5?'wn':'gd'}"><div class="fi-i">${parseFloat(WD.totalRow.avg)>5?'🟡':'🟢'}</div><div class="fb"><h4>WD Processing avg ${WD.totalRow.avg} — only ${(WD.totalRow.w1/WD.totalCount*100).toFixed(1)}% within 1 minute</h4>
+        <p>Bank withdrawals avg <strong>18+ minutes</strong>. PG withdrawals avg 6–10 minutes. Only <strong>${NF(WD.totalRow.w1)}</strong> of ${NF(WD.totalCount)} WD transactions complete in under 1 minute — automation urgently needed.</p></div></div>
+      </div>`;
+  }
+
+  // ── APPROVAL RATE BARS (DP) ──
+  const sorted=[...DP.summary].sort((a,b)=>b.approvalRate-a.approvalRate);
+  el('apb').innerHTML=sorted.map(r=>{
+    const p=r.approvalRate,g=p>=70,w=p>=50&&p<70,c=g?'#16a34a':w?'#d29922':'#f04040';
+    const bd=g?`<span class="bb" style="background:#082008;color:#4ade80">GOOD</span>`:w?`<span class="bb" style="background:#1a1000;color:#fbbf24">MED</span>`:`<span class="bb" style="background:#1a0808;color:#f87171">POOR</span>`;
+    return`<div class="br"><div class="bl">${r.pg}</div><div class="bt"><div class="bf" style="width:${p}%;background:${c}"></div></div><div class="bv">${p.toFixed(1)}%</div>${bd}</div>`;
+  }).join('');
+
+  // WD rate bars
+  if(WD){
+    el('an-wd-rate-bars').innerHTML=WD.summary.sort((a,b)=>b.approvalRate-a.approvalRate).map(r=>{
+      const p=r.approvalRate,g=p>=90,w=p>=80;
+      const c=g?'#16a34a':w?'#d29922':'#f04040';
+      const bd=g?`<span class="bb" style="background:#082008;color:#4ade80">GOOD</span>`:w?`<span class="bb" style="background:#1a1000;color:#fbbf24">MED</span>`:`<span class="bb" style="background:#1a0808;color:#f87171">POOR</span>`;
+      return`<div class="br"><div class="bl">${r.pg}</div><div class="bt"><div class="bf" style="width:${p}%;background:${c}"></div></div><div class="bv">${p.toFixed(1)}%</div>${bd}</div>`;
+    }).join('');
+  }
+
+  // Findings
+  const poor=DP.summary.filter(r=>r.approvalRate<50);
+  const critPoor=DP.summary.filter(r=>r.approvalRate<40);
+  const failedAmt=poor.reduce((s,r)=>s+(r.totalAttempts-r.count),0);
+  el('apf').innerHTML=
+    (critPoor.length?`<div class="fi cr"><div class="fi-i">🔴</div><div class="fb"><h4>${critPoor.map(r=>r.pg).join(', ')} — Critical: Below 40% Approval</h4><p>Out of <strong>${NF(critPoor.reduce((s,r)=>s+r.totalAttempts,0))}</strong> attempts, only <strong>${NF(critPoor.reduce((s,r)=>s+r.count,0))}</strong> approved. That's <strong>${NF(critPoor.reduce((s,r)=>s+(r.totalAttempts-r.count),0))}</strong> failed deposits — immediate provider escalation required.</p></div></div>`:'')
+    +(poor.filter(r=>r.approvalRate>=40).length?`<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>${poor.filter(r=>r.approvalRate>=40).map(r=>r.pg).join(', ')} — Below 50% Approval</h4><p><strong>${NF(poor.filter(r=>r.approvalRate>=40).reduce((s,r)=>s+(r.totalAttempts-r.count),0))}</strong> failed deposits across these gateways. Review timeout configs and implement retry mechanisms.</p></div></div>`:'')
+    +`<div class="fi gd"><div class="fi-i">🟢</div><div class="fb"><h4>${DP.summary.filter(r=>r.approvalRate>=80).map(r=>r.pg).join(' & ')} — Benchmark Gateways (80%+)</h4><p>These gateways prove high approval is achievable. Target all others to reach 80%+ by addressing provider-side rejection causes.</p></div></div>`
+    +`<div class="fi in"><div class="fi-i">💰</div><div class="fb"><h4>Estimated Lost Revenue from Rejections</h4><p>With avg ticket PKR ${N(Math.round(DP.totalAmount/DP.totalCount))}, the <strong>${NF(rejCount)} rejected deposits</strong> represent approximately <strong>PKR ${N(Math.round(rejCount*(DP.totalAmount/DP.totalCount)))}</strong> in lost revenue opportunity.</p></div></div>`;
+
+  // ── SPEED TABLE (DP) ──
+  el('spb').innerHTML=DP.summary.map(r=>{
+    const sl=(r.m510||0)+(r.m1015||0)+(r.m1530||0)+(r.m3060||0)+(r.h1||0);
+    const sp2=r.count?sl/r.count*100:0,w1p=r.count?r.w1/r.count*100:0;
+    const pl2=sp2<5&&w1p>60?'<span class="pl pg">⚡ Fast</span>':sp2>15?'<span class="pl pr">🐢 Slow</span>':'<span class="pl pa">⏱ Med</span>';
+    return`<tr><td><span class="dot" style="background:${PGC[r.pg]}"></span>${r.pg}</td><td>${r.avg}</td><td>${w1p.toFixed(1)}%</td><td>${sp2.toFixed(1)}%</td><td>${pl2}</td></tr>`;
+  }).join('');
+
+  // WD Speed table
+  if(WD) el('an-wd-speed').innerHTML=WD.summary.map(r=>{
+    const sl=(r.m515||0)+(r.h1||0);const sp2=r.count?sl/r.count*100:0;
+    const w1p=r.count?r.w1/r.count*100:0;
+    const pl2=sp2<5&&w1p>50?'<span class="pl pg">⚡ Fast</span>':sp2>20?'<span class="pl pr">🐢 Slow</span>':'<span class="pl pa">⏱ Med</span>';
+    return`<tr><td><span class="dot" style="background:${WPC[r.pg]||'#fff'}"></span>${r.pg}</td><td>${r.avg}</td><td>${w1p.toFixed(1)}%</td><td>${sp2.toFixed(1)}%</td><td>${pl2}</td></tr>`;
+  }).join('');
+
+  const slowG=DP.summary.filter(r=>{const sl=(r.m510||0)+(r.m1015||0)+(r.m1530||0);return r.count&&sl/r.count>0.15;});
+  el('spf').innerHTML=
+    `<div class="fi cr"><div class="fi-i">🔴</div><div class="fb"><h4>DP Max Processing Time: ${DP.totalRow.max}</h4><p>The longest recorded deposit processing time. Any transaction above 15 minutes is a player retention risk — they will abandon and possibly chargeback.</p></div></div>`
+    +(slowG.length?`<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>${slowG.map(r=>r.pg).join(', ')} — High &gt;5 Min Rate</h4><p>Over 15% of transactions on these gateways exceed 5 minutes. These gateways lack auto-approval configuration — add threshold-based rules immediately.</p></div></div>`:'')
+    +(WD?`<div class="fi cr"><div class="fi-i">🔴</div><div class="fb"><h4>WD Processing Critical — avg ${WD.totalRow.avg}, only ${(WD.totalRow.w1/WD.totalCount*100).toFixed(1)}% ≤1 min</h4><p>Nearly <strong>zero withdrawals</strong> process under 1 minute. Bank WD avg is 18+ minutes. Players expect fast withdrawals — this is a major retention risk and competitive disadvantage.</p></div></div>`:'')
+    +`<div class="fi gd"><div class="fi-i">🟢</div><div class="fb"><h4>${DP.summary.filter(r=>r.w1&&r.count&&r.w1/r.count>0.7).map(r=>r.pg).join(' & ')||'—'} — Speed Benchmarks (70%+ ≤1 min)</h4><p>These gateways process the majority of deposits instantly via automation. All other gateways should implement equivalent auto-approval pipelines.</p></div></div>`;
+
+  // ── TRAFFIC CHARTS ──
+  mc2('c-ah','bar',{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[{label:'DP Txns',data:DP.hourly,
+    backgroundColor:DP.hourly.map((_,i)=>(i>=21||i===0)?'rgba(240,64,64,.8)':(i>=17)?'rgba(210,153,34,.7)':'rgba(29,111,234,.55)'),borderRadius:2}]},{pl:{legend:{display:false}}});
+  if(WD) mc2('c-an-wd-h','bar',{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[{label:'WD Txns',data:WD.hourly,
+    backgroundColor:'rgba(34,211,238,.6)',borderRadius:2}]},{pl:{legend:{display:false}}});
+
+  const ph=DP.hourly.indexOf(Math.max(...DP.hourly));
+  const evening=DP.hourly.slice(20,24).reduce((a,b)=>a+b,0);
+  const morningDead=DP.hourly.slice(4,9).reduce((a,b)=>a+b,0);
+  const dailyC=DP.dates.map(d=>Object.values(DP.dailyCnt[d]||{}).reduce((a,b)=>a+b,0));
+  el('trf').innerHTML=
+    `<div class="fi cr"><div class="fi-i">🔴</div><div class="fb"><h4>Evening Rush: 20:00–00:00 = ${(evening/DP.totalCount*100).toFixed(1)}% of Daily Volume</h4><p><strong>${NF(evening)} transactions</strong> in just 4 hours. Peak hour is <strong>${ph}:00</strong> with ${NF(DP.hourly[ph])} txns (${(DP.hourly[ph]/DP.totalCount*100).toFixed(1)}%). If agent staffing doesn't match, SLA breaches cascade during this window.</p></div></div>`
+    +`<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>Dead Zone 04:00–09:00 — Only ${NF(morningDead)} txns</h4><p>Low volume overnight window. Critical question: are pending queues from the previous evening being cleared before the next day's volume ramps up? Morning backlogs compound processing times.</p></div></div>`
+    +`<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>Daily Volume Swings ${(Math.max(...dailyC)/Math.min(...dailyC)).toFixed(1)}× — ${NF(Math.min(...dailyC))} to ${NF(Math.max(...dailyC))} txns/day</h4><p>Near-2× variance means static staffing leaves you either over-resourced on quiet days or overwhelmed on peaks. Dynamic scheduling based on weekday patterns would optimize both cost and quality.</p></div></div>`
+    +(WD?`<div class="fi in"><div class="fi-i">🔵</div><div class="fb"><h4>DP:WD Ratio ${(DP.totalCount/WD.totalCount).toFixed(1)}:1 — Normal for Gaming Operations</h4><p>For every withdrawal, there are ${(DP.totalCount/WD.totalCount).toFixed(1)} deposits. Amount ratio is ${(DP.totalAmount/WD.totalAmount).toFixed(2)}× — healthy balance. Monitor for ratio shifts which may signal player trust issues or bonus abuse.</p></div></div>`:'');
+
+  // ── AGENT ANALYSIS ──
+  const dpS=agData.dpStats;
+  const agSorted=agData.agents.filter(a=>dpS[a]?.total>0).sort((a,b)=>(dpS[b]?.approved||0)-(dpS[a]?.approved||0));
+  el('an-agent-bars').innerHTML=agSorted.map((agent,i)=>{
+    const s=dpS[agent];const p=s.approvalRate;
+    const c=p>=70?'#16a34a':p>=50?'#d29922':'#f04040';
+    const bd=p>=70?`<span class="bb" style="background:#082008;color:#4ade80">GOOD</span>`:p>=50?`<span class="bb" style="background:#1a1000;color:#fbbf24">MED</span>`:`<span class="bb" style="background:#1a0808;color:#f87171">POOR</span>`;
+    return`<div class="br"><div class="bl" style="width:80px">${s.name}</div><div class="bt"><div class="bf" style="width:${p}%;background:${c}"></div></div><div class="bv">${p.toFixed(1)}%</div>${bd}</div>`;
+  }).join('');
+
+  const topAgents=agSorted.filter(a=>dpS[a]?.approvalRate>=70);
+  const poorAgents=agSorted.filter(a=>dpS[a]?.approvalRate<40);
+  const midAgents=agSorted.filter(a=>dpS[a]?.approvalRate>=40&&dpS[a]?.approvalRate<70);
+  el('an-agent-findings').innerHTML=
+    (poorAgents.length?`<div class="fi cr"><div class="fi-i">🔴</div><div class="fb"><h4>Low-Performing Agents: ${poorAgents.map(a=>dpS[a].name).join(', ')}</h4><p>Below 40% approval rate. <strong>${poorAgents.map(a=>dpS[a].name+' ('+dpS[a].approvalRate.toFixed(0)+'%)').join(', ')}</strong>. Agents with low rates may need retraining on rejection criteria, or may be assigned to harder transaction types. Review their recent rejections for patterns.</p></div></div>`:'')
+    +(midAgents.length?`<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>Mid-Tier Agents: ${midAgents.map(a=>dpS[a].name).join(', ')}</h4><p>Approval rates 40–70%. These agents have room to improve. Pair with top performers for coaching — bridging to 70%+ could add thousands of approved transactions.</p></div></div>`:'')
+    +(topAgents.length?`<div class="fi gd"><div class="fi-i">🟢</div><div class="fb"><h4>Top Agents: ${topAgents.map(a=>dpS[a].name).join(', ')}</h4><p>${topAgents.map(a=>dpS[a].name+' ('+dpS[a].approvalRate.toFixed(0)+'%)').join(', ')}. These agents demonstrate best practices — use them as mentors and benchmark their workflow patterns for the team.</p></div></div>`:'')
+    +`<div class="fi in"><div class="fi-i">⏱</div><div class="fb"><h4>Slowest Agent: ${agSorted.sort((a,b)=>(dpS[b]?.avgSecs||0)-(dpS[a]?.avgSecs||0))[0]?dpS[agSorted.sort((a,b)=>(dpS[b]?.avgSecs||0)-(dpS[a]?.avgSecs||0))[0]].name:'—'} (${agSorted.sort((a,b)=>(dpS[b]?.avgSecs||0)-(dpS[a]?.avgSecs||0))[0]?dpS[agSorted.sort((a,b)=>(dpS[b]?.avgSecs||0)-(dpS[a]?.avgSecs||0))[0]].avg:'—'} avg)</h4><p>Fastest agent: <strong>${agSorted.sort((a,b)=>(dpS[a]?.avgSecs||9999)-(dpS[b]?.avgSecs||9999))[0]?dpS[agSorted.sort((a,b)=>(dpS[a]?.avgSecs||9999)-(dpS[b]?.avgSecs||9999))[0]].name:'—'}</strong>. Speed variance between agents suggests process inconsistency — standardize approval procedures and set a team-wide processing SLA of &lt;3 minutes.</p></div></div>`;
+
+  // ── SUPPORT ANALYSIS ──
+  if(DP?.suppTotals){
+    const suppTotal=SUPP_PGS.reduce((s,p)=>s+(DP.suppTotals[p]?.count||0),0);
+    const suppAmt=SUPP_PGS.reduce((s,p)=>s+(DP.suppTotals[p]?.amount||0),0);
+    el('an-supp-bars').innerHTML=SUPP_PGS.map(p=>{
+      const s=DP.suppTotals[p]||{count:0,amount:0};
+      const pct=suppTotal?s.count/suppTotal*100:0;
+      return`<div class="br"><div class="bl">${p}</div><div class="bt"><div class="bf" style="width:${pct}%;background:${SUPP_C[p]}"></div></div><div class="bv">${NF(s.count)}</div></div>`;
+    }).join('');
+    const suppDailyArr=dateRange2Arr(DP.dates).map(d=>SUPP_PGS.reduce((s,p)=>s+(DP.suppDailyCnt[d]?.[p]||0),0));
+    mc2('c-an-supp','bar',{labels:dateRange2Arr(DP.dates).map(d=>{const p=d.split('/');return`${parseInt(p[1])}/${parseInt(p[2])}`;}),
+      datasets:[{label:'Support Txns',data:suppDailyArr,backgroundColor:'rgba(167,139,250,.7)',borderRadius:2}]},{pl:{legend:{display:false}}});
+    const payvipConc=suppTotal?(DP.suppTotals['PayVIP']?.count||0)/suppTotal*100:0;
+    el('an-supp-findings').innerHTML=
+      `<div class="fi wn"><div class="fi-i">🟡</div><div class="fb"><h4>PayVIP Dominates Support — ${payvipConc.toFixed(1)}% of All Support Txns</h4><p><strong>${NF(DP.suppTotals['PayVIP']?.count||0)} of ${NF(suppTotal)} support deposits</strong> go through PayVIP. This signals a systemic problem: players attempting PayVIP deposits can't complete them automatically and need agent intervention. Root cause must be fixed at the integration level.</p></div></div>`
+      +`<div class="fi in"><div class="fi-i">📊</div><div class="fb"><h4>Support Deposits = ${suppTotal?(suppTotal/(DP.totalCount)*100).toFixed(1):'0'}% of Total Approved Deposits</h4><p>Agents are manually routing <strong>${NF(suppTotal)} deposits worth PKR ${N(suppAmt)}</strong> through PG gateways. This is operational overhead — each support deposit requires agent time that could be spent on higher-value tasks.</p></div></div>`
+      +`<div class="fi in"><div class="fi-i">👤</div><div class="fb"><h4>Top Support Agent Handles ${N(Math.max(...Object.values(DP.suppByAgent||{}).map(pgs=>Object.values(pgs).reduce((s,v)=>s+v.count,0))))} Support Txns</h4><p>Support workload is concentrated among a few agents. If a high-support agent is absent, player transactions stall. Build redundancy by cross-training at least 2 backup agents for PG support processing.</p></div></div>`;
+  }
+
+  // ── ANOMALY FLAGS ──
+  const flags=[];
+  if(overallApvRate<60) flags.push({sev:'cr',ico:'🚨',h:'Overall DP Approval Rate Below 60%',p:`${overallApvRate.toFixed(1)}% approval across ${NF(totalAttempts)} attempts. The industry benchmark for payment gateways is 80%+. Immediate provider review sessions required for all sub-50% gateways.`});
+  if(WD&&parseFloat(WD.totalRow.avg.split(':')[1])>9) flags.push({sev:'cr',ico:'⚠️',h:'WD Average Processing Exceeds 9 Minutes',p:`${WD.totalRow.avg} average. With only ${(WD.totalRow.w1/WD.totalCount*100).toFixed(1)}% completing under 1 minute, the WD pipeline is almost entirely manual. Any automation — even partial — would dramatically reduce this.`});
+  const worsAgentRate=Math.min(...agSorted.filter(a=>dpS[a]?.total>=50).map(a=>dpS[a].approvalRate));
+  if(worsAgentRate<40) flags.push({sev:'wn',ico:'👤',h:`Agent Approval Rate as Low as ${worsAgentRate.toFixed(1)}%`,p:`Agent(s) with 50+ transactions are approving fewer than 40%. This is below the automated gateway average. Review if these agents are being routed the most difficult transactions, or if process knowledge gaps exist.`});
+  if(DP&&DP.suppTotals?.PayVIP?.count>200) flags.push({sev:'wn',ico:'🛠️',h:`PayVIP Support Volume: ${NF(DP.suppTotals.PayVIP.count)} Transactions`,p:`Over 200 deposits required manual routing through PayVIP. This is not a workflow issue — it's a gateway integration defect. Escalate to PayVIP technical team with transaction logs.`});
+  const maxDaily=Math.max(...dailyC);const minDaily=Math.min(...dailyC);
+  if(maxDaily/minDaily>1.8) flags.push({sev:'wn',ico:'📈',h:`Volume Variance ${(maxDaily/minDaily).toFixed(1)}× — Peak Day ${NF(maxDaily)} vs Low ${NF(minDaily)}`,p:`High day-to-day swing makes resource planning difficult. Analyze weekday vs weekend patterns to build a predictive staffing model rather than reacting to volume surprises.`});
+  if(DP&&DP.totalRow.max&&DP.totalRow.max.startsWith('0:5')) flags.push({sev:'wn',ico:'⏱',h:`Max Deposit Processing: ${DP.totalRow.max}`,p:`Near-1-hour processing time recorded. Any transaction exceeding 15 minutes is at high chargeback risk. Implement hard timeout alerts at 10 minutes that auto-escalate to a senior agent.`});
+  if(!flags.length) flags.push({sev:'gd',ico:'✅',h:'No Critical Anomalies Detected',p:'All key metrics are within acceptable ranges. Continue monitoring daily for changes in approval rates or processing times.'});
+
+  el('an-flags').innerHTML=flags.map(f=>`<div class="fi ${f.sev}"><div class="fi-i">${f.ico}</div><div class="fb"><h4>${f.h}</h4><p>${f.p}</p></div></div>`).join('');
+}
+
+function bRecos(){
+  if(!DP&&!WD){hd('rcc');sh('es-rc');return;}hd('es-rc');sh('rcc');
+  const totalAttempts=DP?DP.summary.reduce((s,r)=>s+r.totalAttempts,0):0;
+  const rejCount=DP?totalAttempts-DP.totalCount:0;
+  const poor=DP?DP.summary.filter(r=>r.approvalRate<50):[];
+  const slowGWs=DP?DP.summary.filter(r=>r.w1&&r.count&&r.w1/r.count<0.1).map(r=>r.pg).join(', '):[];
+  const topPG=DP?[...DP.summary].sort((a,b)=>b.countPct-a.countPct)[0]:null;
+  const ph=DP?DP.hourly.indexOf(Math.max(...DP.hourly)):22;
+  const suppTotal=DP?SUPP_PGS.reduce((s,p)=>s+(DP.suppTotals?.[p]?.count||0),0):0;
+  const agData=parseAgents(DP?._rawRows||[],WD?._rawRows||[]);
+  const poorAgents=Object.values(agData.dpStats).filter(s=>s.approvalRate<40&&s.total>=50).map(s=>s.name);
+
+  const hiRecos=[
+    poor.length?{n:'01',t:`Fix Rejection Rates: ${poor.map(r=>r.pg).join(', ')}`,p:`These gateways reject over 50% of attempts — <strong>${NF(poor.reduce((s,r)=>s+(r.totalAttempts-r.count),0))} failed deposits</strong> across the data period. Estimated lost revenue: ~PKR ${N(Math.round(poor.reduce((s,r)=>s+(r.totalAttempts-r.count),0)*(DP.totalAmount/DP.totalCount)))}. Work directly with providers on timeout configs, limit increases, and duplicate detection rules. Target: 70%+ approval within 30 days.`}:null,
+    {n:'02',t:`Automate WD Processing — avg ${WD?WD.totalRow.avg:'high'}, only ${WD?(WD.totalRow.w1/WD.totalCount*100).toFixed(1)+'%':'~0%'} ≤1 min`,p:`Withdrawal processing is almost entirely manual, averaging ${WD?WD.totalRow.avg:'9+ minutes'}. For PG withdrawals (Simpaisa, ClickPay, PayVIP, Jeepay) — implement auto-approval for standard amounts. Even a 50% automation rate would halve the queue and dramatically improve player experience.`},
+    {n:'03',t:`Staff the ${ph}:00 Evening Peak — ${(DP.hourly[ph]/DP.totalCount*100).toFixed(1)}% of Volume in 1 Hour`,p:`The single busiest hour has <strong>${NF(DP.hourly[ph])} transactions</strong>. Without dedicated agents during 20:00–00:00 (${((DP.hourly.slice(20,24).reduce((a,b)=>a+b,0))/DP.totalCount*100).toFixed(1)}% of daily volume), queues build and SLAs breach. Roster at least 2 dedicated agents per hour during this window.`},
+    slowGWs.length?{n:'04',t:`Add Auto-Approval Rules for ${slowGWs}`,p:`These gateways process under 10% of deposits within 1 minute — indicating all transactions go through manual review. Implement auto-approval for amounts below PKR 5,000 with clean history. This alone would increase the overall ≤1 min rate significantly.`}:null,
+  ].filter(Boolean);
+
+  const medRecos=[
+    {n:'05',t:'Create a High-Value Deposit Fast-Track Queue (PKR 20,000+)',p:`LocalBank deposits avg PKR ${N(DP?.summary.find(r=>r.pg==='LocalBank')?.avgTicket||43000)} — over ${Math.round((DP?.summary.find(r=>r.pg==='LocalBank')?.avgTicket||43000)/(DP?.totalAmount/DP?.totalCount||5000))}× the platform average. These players are your highest-value segment. A dedicated queue with a 2-minute SLA target ensures VIP treatment for VIP transactions.`},
+    topPG?{n:'06',t:`Reduce ${topPG.pg} Concentration (${topPG.countPct.toFixed(1)}% of all deposits)`,p:`Single point of failure risk. If ${topPG.pg} experiences downtime or a rate change, ${topPG.countPct.toFixed(1)}% of deposit volume is immediately affected. Actively promote the #2 and #3 gateways in the player UI and cap any single gateway below 25%.`}:null,
+    {n:'07',t:'Implement Real-Time SLA Alert Dashboard for Agents',p:`Build a live queue monitor showing pending transaction ages: green (&lt;2 min), amber (2–5 min), red (&gt;5 min). Agents should never have to guess what needs attention. Auto-escalate red transactions to a supervisor. This single tool could reduce SLA breaches by 60%+.`},
+    poorAgents.length?{n:'08',t:`Agent Performance Coaching: ${poorAgents.join(', ')}`,p:`These agents with 50+ transactions are below 40% approval rate. Run a 1-week audit of their rejection decisions — are they rejecting valid transactions? Or are they being assigned harder cases? Coaching sessions based on top-agent patterns (RHODA, ALLEN, IVAN) should target 70%+ within 60 days.`}:null,
+    suppTotal>200?{n:'09',t:`Fix PayVIP Integration to Eliminate ${NF(DP.suppTotals?.PayVIP?.count||0)} Support Deposits/Period`,p:`${NF(DP.suppTotals?.PayVIP?.count||0)} deposits required manual agent routing through PayVIP. Each one consumes ~${DP.suppTotals?.PayVIP?.count?Math.round((DP.summary.find(r=>r.pg==='PayVIP')?.avg?.split(':')?.reduce((s,v,i)=>s+parseFloat(v)*[3600,60,1][i],0)||200)):200} seconds of agent time. Total agent-hours wasted: ~${Math.round((DP.suppTotals?.PayVIP?.count||0)*3.5/60)} hours. Fix the PayVIP auto-processing pipeline to eliminate this entirely.`}:null,
+  ].filter(Boolean);
+
+  const hiHTML=hiRecos.map(r=>`<div class="rc hi"><div class="rn">${r.n}</div><div><h4>🔴 ${r.t}</h4><p>${r.p}</p></div></div>`).join('');
+  const medHTML=medRecos.map(r=>`<div class="rc med"><div class="rn">${r.n}</div><div><h4>🟡 ${r.t}</h4><p>${r.p}</p></div></div>`).join('');
+  el('reco-grid').innerHTML=`
+    <div><div style="font-size:10px;color:var(--red);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:9px;">🔴 HIGH PRIORITY</div>${hiHTML}</div>
+    <div><div style="font-size:10px;color:var(--amb);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:9px;">🟡 MEDIUM PRIORITY</div>${medHTML}</div>`;
+}
+
+function bSC(){
+  if(!DP){hd('scc');sh('es-sc');return;}hd('es-sc');sh('scc');
+  const totalAttempts=DP.summary.reduce((s,r)=>s+r.totalAttempts,0);
+  const totalRej=totalAttempts-DP.totalCount;
+  el('sc-sub').textContent=`${DP.dateRange} · ${NF(totalAttempts)} total DP attempts · ${NF(DP.totalCount)} approved (${(DP.totalCount/totalAttempts*100).toFixed(1)}%) · ${NF(totalRej)} rejected`;
+
+  // DP Gateway scorecard
+  el('scb').innerHTML=DP.summary.map(r=>{
+    const sl=(r.m510||0)+(r.m1015||0)+(r.m1530||0)+(r.m3060||0)+(r.h1||0);
+    const sp2=r.count?sl/r.count*100:0,w1p=r.count?r.w1/r.count*100:0;
+    const h=r.approvalRate>=80&&sp2<5?'<span class="pl pg">✅ Healthy</span>':r.approvalRate>=65&&sp2<15?'<span class="pl pa">⚠️ Fair</span>':r.approvalRate>=50?'<span class="pl pr">❌ Poor</span>':'<span class="pl pr">🚨 Critical</span>';
+    return`<tr>
+      <td><span class="dot" style="background:${PGC[r.pg]}"></span><strong>${r.pg}</strong></td>
+      <td>${NF(r.totalAttempts)}</td><td>${NF(r.count)}</td>
+      <td><span class="pl ${r.approvalRate>=70?'pg':r.approvalRate>=50?'pa':'pr'}">${r.approvalRate.toFixed(1)}%</span></td>
+      <td>${r.avg}</td>
+      <td><span class="pl ${w1p>=60?'pg':w1p>=30?'pa':'pr'}">${w1p.toFixed(1)}%</span></td>
+      <td><span class="pl ${sp2<5?'pg':sp2<15?'pa':'pr'}">${sp2.toFixed(1)}%</span></td>
+      <td>${N(r.avgTicket)}</td><td>${r.amountPct.toFixed(1)}%</td>
+      <td style="color:${r.supportCount>0?'#a78bfa':'#2a3a52'}">${r.supportCount>0?NF(r.supportCount):'—'}</td>
+      <td>${h}</td></tr>`;
+  }).join('');
+  el('sc-dp-foot').innerHTML=`<tr class="tr"><td>Total</td><td>${NF(totalAttempts)}</td><td>${NF(DP.totalCount)}</td>
+    <td>${(DP.totalCount/totalAttempts*100).toFixed(1)}%</td><td>${DP.totalRow.avg}</td>
+    <td>${(DP.totalRow.w1/DP.totalCount*100).toFixed(1)}%</td>
+    <td>${((DP.totalRow.m510+DP.totalRow.m1015+DP.totalRow.m1530)/DP.totalCount*100).toFixed(1)}%</td>
+    <td>${N(Math.round(DP.totalAmount/DP.totalCount))}</td><td>100%</td>
+    <td>${NF(DP.totalRow.supportTotal||0)}</td><td>—</td></tr>`;
+
+  // WD Gateway scorecard
+  if(WD){
+    const wdTotal=WD.summary.reduce((s,r)=>s+r.total,0);
+    el('sc-wd-tbody').innerHTML=WD.summary.map(r=>{
+      const sl=(r.m515||0)+(r.h1||0);const sp2=r.count?sl/r.count*100:0;const w1p=r.count?r.w1/r.count*100:0;
+      const h=r.approvalRate>=95&&sp2<10?'<span class="pl pg">✅ Healthy</span>':r.approvalRate>=85&&sp2<20?'<span class="pl pa">⚠️ Fair</span>':'<span class="pl pr">❌ Poor</span>';
+      return`<tr><td><span class="dot" style="background:${WPC[r.pg]||'#fff'}"></span><strong>${r.pg}</strong></td>
+        <td>${NF(r.total)}</td><td>${NF(r.count)}</td>
+        <td><span class="pl ${r.approvalRate>=90?'pg':r.approvalRate>=80?'pa':'pr'}">${r.approvalRate.toFixed(1)}%</span></td>
+        <td>${r.avg}</td>
+        <td><span class="pl ${w1p>=20?'pg':w1p>=5?'pa':'pr'}">${w1p.toFixed(1)}%</span></td>
+        <td><span class="pl ${sp2<10?'pg':sp2<25?'pa':'pr'}">${sp2.toFixed(1)}%</span></td>
+        <td>${N(r.avgTicket||0)}</td><td>${r.amountPct.toFixed(1)}%</td><td>${h}</td></tr>`;
+    }).join('');
+    el('sc-wd-foot').innerHTML=`<tr class="tr"><td>Total</td><td>${NF(wdTotal)}</td><td>${NF(WD.totalCount)}</td>
+      <td>${(WD.totalCount/wdTotal*100).toFixed(1)}%</td><td>${WD.totalRow.avg}</td>
+      <td>${(WD.totalRow.w1/WD.totalCount*100).toFixed(1)}%</td>
+      <td>${((WD.totalRow.m515+WD.totalRow.h1)/WD.totalCount*100).toFixed(1)}%</td>
+      <td>${N(Math.round(WD.totalAmount/WD.totalCount))}</td><td>100%</td><td>—</td></tr>`;
+  }
+
+  // Agent scorecard
+  const agData=parseAgents(DP._rawRows||[],WD?._rawRows||[]);
+  const{agents,dpStats,wdStats}=agData;
+  el('sc-ag-tbody').innerHTML=agents
+    .filter(a=>(dpStats[a]?.total||0)+(wdStats[a]?.total||0)>0)
+    .sort((a,b)=>((dpStats[b]?.approved||0)+(wdStats[b]?.approved||0))-((dpStats[a]?.approved||0)+(wdStats[a]?.approved||0)))
+    .map((agent,i)=>{
+      const dp=dpStats[agent]||{},wd=wdStats[agent]||{};
+      const suppCnt=Object.values(DP?.suppByAgent?.[agent]||{}).reduce((s,v)=>s+v.count,0);
+      const suppAmt=Object.values(DP?.suppByAgent?.[agent]||{}).reduce((s,v)=>s+v.amount,0);
+      const totalAmt=(dp.amount||0)+(wd.amount||0)+suppAmt;
+      const dpRate=dp.approvalRate||0,wdRate=wd.approvalRate||0;
+      const rating=dpRate>=75&&(dp.avgSecs||999)<300?'<span class="pl pg">⭐ Top</span>':dpRate>=60?'<span class="pl pa">✅ Good</span>':dpRate>=40?'<span class="pl pb">⚠️ Fair</span>':'<span class="pl pr">⬇️ Low</span>';
+      return`<tr>
+        <td><span class="dot" style="background:${HUMAN_COLOR[i%HUMAN_COLOR.length]}"></span><strong>${dp.name||wd.name||agent}</strong><div style="font-size:9px;color:var(--mut)">${agent}</div></td>
+        <td>${NF(dp.total||0)}</td>
+        <td><span class="pl ${dpRate>=70?'pg':dpRate>=50?'pa':'pr'}">${dpRate.toFixed(1)}%</span></td>
+        <td>${NF(wd.total||0)}</td>
+        <td><span class="pl ${wdRate>=80?'pg':wdRate>=60?'pa':'pr'}">${wdRate>0?wdRate.toFixed(1)+'%':'—'}</span></td>
+        <td style="color:${suppCnt>0?'#a78bfa':'#2a3a52'}">${suppCnt>0?NF(suppCnt):'—'}</td>
+        <td style="color:#e3b341;font-weight:700">${N(totalAmt)}</td>
+        <td>${dp.avg||'—'}</td>
+        <td>${dp.daysActive||wd.daysActive||0}d</td>
+        <td>${rating}</td>
+      </tr>`;
+    }).join('');
+
+  // Charts
+  mc2('c-scv','bar',{labels:PGO,datasets:[
+    {label:'DP Count',data:DP.summary.map(r=>r.count),backgroundColor:'rgba(29,111,234,.7)',borderRadius:2},
+    ...(WD?[{label:'WD Count',data:PGO.map(p=>WD.summary.find(s=>s.pg===p)?.count||0),backgroundColor:'rgba(34,211,238,.6)',borderRadius:2}]:[])
+  ]});
+  mc2('c-sca','bar',{labels:PGO,datasets:[{label:'Approval Rate %',data:DP.summary.map(r=>r.approvalRate),
+    backgroundColor:DP.summary.map(r=>r.approvalRate>=70?'rgba(22,163,74,.8)':r.approvalRate>=50?'rgba(210,153,34,.8)':'rgba(240,64,64,.8)'),borderRadius:3}]},
+    {sy:{ticks:{color:'#5a7090',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'}},pl:{legend:{display:false}}});
+
+  const agList=agents.filter(a=>dpStats[a]?.total>=10).sort((a,b)=>(dpStats[b]?.approved||0)-(dpStats[a]?.approved||0));
+  const agColors=agList.map((_,i)=>HUMAN_COLOR[i%HUMAN_COLOR.length]);
+  mc2('c-sc-ag-rate','bar',{labels:agList.map(a=>dpStats[a].name),datasets:[{label:'DP Approval %',data:agList.map(a=>dpStats[a].approvalRate),
+    backgroundColor:agList.map(a=>dpStats[a].approvalRate>=70?'rgba(22,163,74,.8)':dpStats[a].approvalRate>=50?'rgba(210,153,34,.8)':'rgba(240,64,64,.8)'),borderRadius:3}]},
+    {sy:{ticks:{color:'#5a7090',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'}},pl:{legend:{display:false}}});
+  mc2('c-sc-ag-amt','bar',{labels:agList.map(a=>dpStats[a].name),datasets:[{label:'Total Amt (PKR)',data:agList.map(a=>{
+    const suppAmt=Object.values(DP?.suppByAgent?.[a]||{}).reduce((s,v)=>s+v.amount,0);
+    const wdAmt=wdStats[a]?.amount||0;
+    return(dpStats[a].amount||0)+wdAmt+suppAmt;
+  }),backgroundColor:agColors,borderRadius:3}]},{pl:{legend:{display:false}}});
+}
+
+// ── NAV ──
+function sp(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  el('page-'+id).classList.add('active');if(btn)btn.classList.add('active');
+}
+function flt(cid,q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll(`#${cid} .db`).forEach(b=>{
+    const l=b.querySelector('.dl')?.textContent.toLowerCase()||'';
+    b.classList.toggle('hidden',q!==''&&!l.includes(q));
+  });
+}
+
+// ── INIT ──
+(async function init(){
+  try{await loadStore();}catch(e){console.warn(e);}
+  el('ls').style.display='none';
+  if(DP||WD){build();updSS();}else updSS();
+})();
+</script>
+</body>
+</html>
